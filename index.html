@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Builder</title>
+    <meta name="description" content="Interactive grid-based building game with doors, enemies, and stairs.">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://nagoshiashumari.github.io/Rpg-Awesome/stylesheets/rpg-awesome.min.css">
+    <!-- <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            overflow: hidden;
+        }
+        #grid-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: 0 0;
+        }
+        .cell {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ccc;
+            position: absolute;
+            box-sizing: border-box;
+        }
+        .filled {
+            background-color: #87CEFA;
+        }
+        .cell.filled::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid black;
+            pointer-events: none;
+        }
+        .cell.filled.left::before { border-left-color: #87CEFA; }
+        .cell.filled.right::before { border-right-color: #87CEFA; }
+        .cell.filled.top::before { border-top-color: #87CEFA; }
+        .cell.filled.bottom::before { border-bottom-color: #87CEFA; }
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #2196F3;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 56px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+        .fab-menu {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            display: none;
+            flex-direction: column;
+            align-items: flex-end;
+            z-index: 1000;
+        }
+        .fab-item {
+            background-color: #1E88E5;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+        .fab-item.red {
+            background-color: #E53935;
+        }
+        .fab-submenu {
+            display: none;
+            margin-right: 10px;
+        }
+        .fab-item i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+        }
+        .cell i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+        }
+        .fab-item .ra, .fab-item .material-icons, .cell .ra, .cell .material-icons {
+            line-height: 40px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+        }
+        #startMenu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 2000;
+        }
+        #startMenu button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .secret-element .secret-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    .secret-element .secret-container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 1;
+    }
+    .secret-element .secret-container i {
+        position: relative;
+        z-index: 2;
+    }
+    .secret-element.revealed .secret-container::after {
+        display: none;
+    }
+    .secret-element:hover .secret-container {
+        opacity: 1;
+    } -->
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            overflow: hidden;
+        }
+        #map-area {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+    }
+    #grid-container {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+    }
+    #grid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform-origin: 0 0;
+    }
+    /* #row-labels, #col-labels {
+        position: absolute;
+        z-index: 10;
+        font-size: 12px;
+        color: #333;
+        pointer-events: none;
+    }
+    #row-labels {
+        top: 20px;
+        left: 0;
+    }
+    #col-labels {
+        top: 0;
+        left: 20px;
+    } */
+    .grid-label {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(255, 255, 255, 0.7);
+    }
+        .cell {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ccc;
+            position: absolute;
+            box-sizing: border-box;
+        }
+        .cell.filled {
+            background-color: #87CEFA;
+        }
+        .cell.filled::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid black;
+            pointer-events: none;
+        }
+        .cell.filled.left::before { border-left-color: #87CEFA; }
+        .cell.filled.right::before { border-right-color: #87CEFA; }
+        .cell.filled.top::before { border-top-color: #87CEFA; }
+        .cell.filled.bottom::before { border-bottom-color: #87CEFA; }
+        .cell i, .cell .secret-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            z-index: 2;
+        }
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #2196F3;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 56px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+        .fab-menu {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            display: none;
+            flex-direction: column;
+            align-items: flex-end;
+            z-index: 1000;
+        }
+        .fab-item {
+            background-color: #1E88E5;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+        .fab-item.red {
+            background-color: #E53935;
+        }
+        .fab-submenu {
+            display: none;
+            margin-right: 10px;
+        }
+        .fab-item i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+        }
+        #startMenu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 2000;
+        }
+        #startMenu button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .secret-element .secret-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .secret-element .secret-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1;
+        }
+        .secret-element .secret-container i {
+            position: relative;
+            z-index: 2;
+        }
+        .secret-element.revealed .secret-container::after {
+            display: none;
+        }
+        .legend {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        z-index: 1000;
+        max-width: 200px;
+        display: none;
+    }
+    .legend h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    .legend-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .legend-text {
+        font-size: 14px;
+    }
+    #toggleLegend {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 1001;
+        background-color: #2196F3;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .coordinate-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+    }
+    /* #row-labels, #col-labels {
+        position: absolute;
+        z-index: 10;
+        font-size: 12px;
+        color: #333;
+        pointer-events: none;
+    }
+    #row-labels {
+        top: 0;
+        left: 0;
+    }
+    #col-labels {
+        top: 0;
+        left: 0;
+    } */
+    .grid-label {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(255, 255, 255, 0.7);
+    }
+    </style>
+</head>
+<body>
+    <div id="startMenu">
+        <h1>Grid Builder</h1>
+        <p>Tap grid squares to fill them. Use the menu to add doors, enemies, and stairs.</p>
+        <button id="readyBtn">Ready</button>
+    </div>
+    <div id="map-area">
+        <!-- <div id="row-labels"></div>
+        <div id="col-labels"></div> -->
+        <div id="grid-container">
+            <div id="grid"></div>
+        </div>
+    </div>
+    <div class="fab" id="fabBtn">+</div>
+    <div class="fab-menu" id="fabMenu"></div>
+
+    <div id="legend" class="legend">
+        <h3>Map Legend</h3>
+        <div id="legendContent"></div>
+    </div>
+    <script>
+        // DOM Elements
+        const grid = document.getElementById('grid');
+        const gridContainer = document.getElementById('grid-container');
+        const fabMenu = document.getElementById('fabMenu');
+        const fabBtn = document.getElementById('fabBtn');
+        const startMenu = document.getElementById('startMenu');
+        const readyBtn = document.getElementById('readyBtn');
+
+        // Grid Configuration
+        let currentMode = 'fill';
+        let mapData = [];
+        let scale = 1;
+        let translateX = 0;
+        let translateY = 0;
+        let isDragging = false;
+        let lastX, lastY;
+        const cellSize = 40;
+        const gridSize = 100;
+        const totalGridSize = gridSize * cellSize;
+        const cells = new Map();
+
+        // FAB Menu Configuration
+        const menuItems = [
+    { id: 'mapElements', icon: { ra: 'ra-castle-flag', material: 'map' }, submenu: [
+        { id: 'addDoor', icon: { ra: 'ra-wooden-door', material: 'door_front' } },
+        { id: 'addSecretDoor', icon: { ra: 'ra-secret-door', material: 'door_sliding' } },
+        { id: 'markEnemy', icon: { ra: 'ra-dragon', material: 'pest_control' } },
+        { id: 'markStairs', icon: { ra: 'ra-tower', material: 'stairs' } },
+        { id: 'addTrap', icon: { ra: 'ra-spikes-full', material: 'warning' } },
+        { id: 'addNpc', icon: { ra: 'ra-player', material: 'person' } },
+        { id: 'addTreasure', icon: { ra: 'ra-treasure-map', material: 'attach_money' } }
+    ]},
+    { id: 'saveMap', icon: { ra: 'ra-save', material: 'save' }, class: 'red' },
+    { id: 'loadMap', icon: { ra: 'ra-folder', material: 'folder_open' }, class: 'red' }
+];
+
+const iconMap = {
+    'door': { ra: 'ra-wooden-door', material: 'door_front' },
+    'secretdoor': { ra: 'ra-secret-door', material: 'door_sliding' },
+    'enemy': { ra: 'ra-dragon', material: 'pest_control' },
+    'stairs': { ra: 'ra-tower', material: 'stairs' },
+    'trap': { ra: 'ra-spikes-full', material: 'warning' },
+    'npc': { ra: 'ra-player', material: 'person' },
+    'treasure': { ra: 'ra-treasure-map', material: 'attach_money' }
+};
+
+const legendItems = [
+        { type: 'door', label: 'Door' },
+        { type: 'secretdoor', label: 'Secret Door' },
+        { type: 'enemy', label: 'Enemy' },
+        { type: 'stairs', label: 'Stairs' },
+        { type: 'trap', label: 'Trap' },
+        { type: 'npc', label: 'NPC' },
+        { type: 'treasure', label: 'Treasure' }
+    ];
+
+        // Grid Functions
+        function createGrid() {
+            grid.innerHTML = '';
+            grid.style.width = `${totalGridSize}px`;
+            grid.style.height = `${totalGridSize}px`;
+            updateVisibleCells();
+            mapData = Array(gridSize).fill().map(() => Array(gridSize).fill(null));
+        }
+
+        function updateVisibleCells() {
+    const visibleStartCol = Math.max(0, Math.floor(-translateX / cellSize));
+    const visibleStartRow = Math.max(0, Math.floor(-translateY / cellSize));
+    const visibleEndCol = Math.min(gridSize, Math.ceil((-translateX + window.innerWidth / scale) / cellSize));
+    const visibleEndRow = Math.min(gridSize, Math.ceil((-translateY + window.innerHeight / scale) / cellSize));
+
+    for (let row = visibleStartRow; row < visibleEndRow; row++) {
+        for (let col = visibleStartCol; col < visibleEndCol; col++) {
+            const cellId = `${row}-${col}`;
+            if (!cells.has(cellId)) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.style.left = `${col * cellSize}px`;
+                cell.style.top = `${row * cellSize}px`;
+                
+                // Add coordinate labels to first row and column
+                if (row === 0 || col === 0) {
+                    cell.classList.add('coordinate-label');
+                    if (row === 0 && col === 0) {
+                        cell.textContent = '';  // Leave top-left cell empty
+                    } else if (row === 0) {
+                        cell.textContent = String.fromCharCode(64 + col);  // A, B, C, ...
+                    } else {
+                        cell.textContent = row;
+                    }
+                } else {
+                    cell.addEventListener('click', () => handleCellClick(cell, row, col));
+                }
+                
+                grid.appendChild(cell);
+                cells.set(cellId, cell);
+            }
+        }
+    }
+}
+
+        function createCoordinateLabels() {
+        const rowLabels = document.getElementById('row-labels');
+        const colLabels = document.getElementById('col-labels');
+        
+        for (let i = 0; i < gridSize; i++) {
+            const rowLabel = document.createElement('div');
+            rowLabel.className = 'grid-label';
+            rowLabel.style.left = '0';
+            rowLabel.style.top = `${i * cellSize + 20}px`;
+            rowLabel.style.width = '20px';
+            rowLabel.style.height = `${cellSize}px`;
+            rowLabel.textContent = (i + 1).toString();
+            rowLabels.appendChild(rowLabel);
+
+            const colLabel = document.createElement('div');
+            colLabel.className = 'grid-label';
+            colLabel.style.top = '0';
+            colLabel.style.left = `${i * cellSize + 20}px`;
+            colLabel.style.width = `${cellSize}px`;
+            colLabel.style.height = '20px';
+            colLabel.textContent = String.fromCharCode(65 + i); // A, B, C, ...
+            colLabels.appendChild(colLabel);
+        }
+    }
+
+    function updateCoordinateLabels() {
+        const rowLabels = document.getElementById('row-labels');
+        const colLabels = document.getElementById('col-labels');
+        
+        rowLabels.style.transform = `translateY(${translateY}px) scale(${scale})`;
+        colLabels.style.transform = `translateX(${translateX}px) scale(${scale})`;
+    }
+
+    // Modify your existing updateGridTransform function
+    function updateGridTransform() {
+    grid.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+    updateVisibleCells();
+}
+
+function screenToGridCoordinates(screenX, screenY) {
+    const rect = gridContainer.getBoundingClientRect();
+    const gridX = (screenX - rect.left - 20) / scale - translateX;
+    const gridY = (screenY - rect.top - 20) / scale - translateY;
+    
+    const col = Math.floor(gridX / cellSize);
+    const row = Math.floor(gridY / cellSize);
+    
+    return { row, col };
+}
+
+function handleCellClick(cell, row, col) {
+    if (row === 0 || col === 0) return;  // Ignore clicks on coordinate labels
+    
+    switch (currentMode) {
+        case 'fill':
+            toggleFill(cell, row, col);
+            break;
+        case 'door':
+        case 'enemy':
+        case 'stairs':
+        case 'trap':
+        case 'npc':
+        case 'treasure':
+            addMapElement(cell, row, col);
+            break;
+    }
+}
+
+        function toggleFill(cell, row, col) {
+    cell.classList.toggle('filled');
+    updateBorders(cell, row, col);
+    
+    if (cell.classList.contains('filled')) {
+        mapData[row][col] = 'filled';
+    } else {
+        mapData[row][col] = null;
+        cell.innerHTML = ''; // Clear any existing content when unfilling
+    }
+}
+
+        function updateBorders(cell, row, col) {
+            const directions = [
+                { name: 'left', condition: col > 0, neighbor: getCell(row, col - 1) },
+                { name: 'right', condition: col < gridSize - 1, neighbor: getCell(row, col + 1) },
+                { name: 'top', condition: row > 0, neighbor: getCell(row - 1, col) },
+                { name: 'bottom', condition: row < gridSize - 1, neighbor: getCell(row + 1, col) }
+            ];
+
+            directions.forEach(dir => {
+                if (dir.condition && dir.neighbor) {
+                    if (cell.classList.contains('filled') && dir.neighbor.classList.contains('filled')) {
+                        cell.classList.add(dir.name);
+                        dir.neighbor.classList.add(getOppositeDirection(dir.name));
+                    } else {
+                        cell.classList.remove(dir.name);
+                        dir.neighbor.classList.remove(getOppositeDirection(dir.name));
+                    }
+                }
+            });
+        }
+
+        function getCell(row, col) {
+            return cells.get(`${row}-${col}`);
+        }
+
+        function getOppositeDirection(direction) {
+            const opposites = { left: 'right', right: 'left', top: 'bottom', bottom: 'top' };
+            return opposites[direction];
+        }
+
+        // Icon Functions
+        function checkIconAvailability(iconClass) {
+            return new Promise((resolve) => {
+                const tempIcon = document.createElement('i');
+                tempIcon.className = `ra ${iconClass}`;
+                tempIcon.style.position = 'absolute';
+                tempIcon.style.visibility = 'hidden';
+                document.body.appendChild(tempIcon);
+
+                setTimeout(() => {
+                    const isAvailable = tempIcon.offsetWidth > 0 && tempIcon.offsetHeight > 0;
+                    document.body.removeChild(tempIcon);
+                    resolve(isAvailable);
+                }, 50);
+            });
+        }
+
+        async function createIcon(iconObj) {
+            const isRpgIconAvailable = await checkIconAvailability(iconObj.ra);
+            const icon = document.createElement('i');
+            
+            if (isRpgIconAvailable) {
+                icon.className = `ra ${iconObj.ra}`;
+            } else {
+                icon.className = 'material-icons';
+                icon.textContent = iconObj.material;
+            }
+            
+            return icon;
+        }
+
+        function getIconClass(mode) {
+    return iconMap[mode] || { ra: '', material: '' };
+}
+
+async function addMapElement(cell, row, col) {
+    if (cell.classList.contains('filled')) {
+        const icons = getIconClass(currentMode);
+        const isRpgIconAvailable = await checkIconAvailability(icons.ra);
+
+        let iconElement;
+        if (isRpgIconAvailable) {
+            iconElement = `<i class="ra ${icons.ra}"></i>`;
+        } else {
+            iconElement = `<i class="material-icons">${icons.material}</i>`;
+        }
+
+        if (currentMode === 'secretdoor' || currentMode === 'trap') {
+            cell.classList.add('secret-element');
+            iconElement = `<div class="secret-container">${iconElement}</div>`;
+            
+            // Add click event to toggle reveal
+            cell.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the main cell click event
+                cell.classList.toggle('revealed');
+            });
+        }
+
+        cell.innerHTML = iconElement;
+        mapData[row][col] = currentMode;
+    }
+}
+
+        // FAB Menu Functions
+        async function createFabMenu() {
+            for (const item of menuItems) {
+                const fabItem = document.createElement('div');
+                fabItem.id = item.id;
+                fabItem.className = `fab-item ${item.class || ''}`;
+                
+                const icon = await createIcon(item.icon);
+                fabItem.appendChild(icon);
+                
+                fabMenu.appendChild(fabItem);
+
+                if (item.submenu) {
+                    const submenu = document.createElement('div');
+                    submenu.className = 'fab-submenu';
+                    submenu.id = `${item.id}Submenu`;
+                    
+                    for (const subItem of item.submenu) {
+                        const subFabItem = document.createElement('div');
+                        subFabItem.id = subItem.id;
+                        subFabItem.className = 'fab-item';
+                        
+                        const subIcon = await createIcon(subItem.icon);
+                        subFabItem.appendChild(subIcon);
+                        
+                        submenu.appendChild(subFabItem);
+                    }
+                    
+                    fabMenu.appendChild(submenu);
+                }
+            }
+        }
+
+        async function createLegend() {
+    const legendContent = document.getElementById('legendContent');
+    legendContent.innerHTML = ''; // Clear existing content
+
+    for (const item of legendItems) {
+        const icons = getIconClass(item.type);
+        const isRpgIconAvailable = await checkIconAvailability(icons.ra);
+        
+        const legendItem = document.createElement('div');
+        legendItem.className = 'legend-item';
+        
+        const iconElement = document.createElement('div');
+        iconElement.className = 'legend-icon';
+        if (isRpgIconAvailable) {
+            iconElement.innerHTML = `<i class="ra ${icons.ra}"></i>`;
+        } else {
+            iconElement.innerHTML = `<i class="material-icons">${icons.material}</i>`;
+        }
+        
+        const textElement = document.createElement('div');
+        textElement.className = 'legend-text';
+        textElement.textContent = item.label;
+        
+        legendItem.appendChild(iconElement);
+        legendItem.appendChild(textElement);
+        legendContent.appendChild(legendItem);
+    }
+}
+
+function setupLegend() {
+    const legendItems = [
+        { type: 'door', label: 'Door' },
+        { type: 'secretdoor', label: 'Secret Door' },
+        { type: 'enemy', label: 'Enemy' },
+        { type: 'stairs', label: 'Stairs' },
+        { type: 'trap', label: 'Trap' },
+        { type: 'npc', label: 'NPC' },
+        { type: 'treasure', label: 'Treasure' }
+    ];
+
+    // Create a button to toggle the legend
+    const toggleButton = document.createElement('button');
+    toggleButton.id = 'toggleLegend';
+    toggleButton.innerHTML = '?';
+    document.body.appendChild(toggleButton);
+
+    const legend = document.getElementById('legend');
+    toggleButton.addEventListener('click', () => {
+        legend.style.display = legend.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Initial creation of the legend
+    createLegend();
+}
+
+        function setupEventListeners() {
+            const mapElements = document.getElementById('mapElements');
+            const mapElementsSubmenu = document.getElementById('mapElementsSubmenu');
+            const saveMapBtn = document.getElementById('saveMap');
+            const loadMapBtn = document.getElementById('loadMap');
+
+            if (!mapElements || !mapElementsSubmenu || !saveMapBtn || !loadMapBtn) {
+                console.error('One or more FAB menu elements are missing');
+                return;
+            }
+
+            fabBtn.addEventListener('click', () => {
+                fabMenu.style.display = fabMenu.style.display === 'none' ? 'flex' : 'none';
+            });
+
+            mapElements.addEventListener('click', () => {
+                mapElementsSubmenu.style.display = mapElementsSubmenu.style.display === 'none' ? 'flex' : 'none';
+            });
+
+            document.querySelectorAll('#mapElementsSubmenu .fab-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    currentMode = e.currentTarget.id.replace('add', '').replace('mark', '').toLowerCase();
+                    mapElementsSubmenu.style.display = 'none';
+                });
+            });
+
+            saveMapBtn.addEventListener('click', saveMap);
+            loadMapBtn.addEventListener('click', loadMap);
+
+
+        }
+
+        // Save and Load Functions
+        function saveMap() {
+    const filledCells = [];
+    const specialCells = [];
+
+    cells.forEach((cell, key) => {
+        const [row, col] = key.split('-').map(Number);
+        if (cell.classList.contains('filled')) {
+            filledCells.push({ row, col });
+            
+            const iconElement = cell.querySelector('i');
+            if (iconElement) {
+                const type = getElementTypeFromIcon(iconElement);
+                specialCells.push({
+                    row,
+                    col,
+                    type,
+                    isSecret: cell.classList.contains('secret-element'),
+                    isRevealed: cell.classList.contains('revealed')
+                });
+            }
+        }
+    });
+
+    const saveData = {
+        filledCells,
+        specialCells
+    };
+
+    const mapJson = JSON.stringify(saveData);
+    const blob = new Blob([mapJson], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'rpg_map.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function getElementTypeFromIcon(iconElement) {
+    if (iconElement.classList.contains('ra')) {
+        return Object.keys(iconMap).find(key => iconElement.classList.contains(iconMap[key].ra));
+    } else if (iconElement.classList.contains('material-icons')) {
+        return Object.keys(iconMap).find(key => iconElement.textContent === iconMap[key].material);
+    }
+    return null;
+}
+
+// Updated loadMap function
+function loadMap() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+    input.onchange = (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const loadedData = JSON.parse(e.target.result);
+            renderLoadedMap(loadedData);
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
+
+// Update the renderLoadedMap function
+async function renderLoadedMap(loadedData) {
+    // Clear all cells first
+    cells.forEach(cell => {
+        cell.className = 'cell';
+        cell.innerHTML = '';
+    });
+
+    // First, fill all the blue cells
+    loadedData.filledCells.forEach(({ row, col }) => {
+        const cellKey = `${row}-${col}`;
+        const cell = cells.get(cellKey);
+        if (cell) {
+            cell.classList.add('filled');
+            updateBorders(cell, row, col);
+        }
+    });
+
+    // Then, add special elements
+    for (const cellData of loadedData.specialCells) {
+        const { row, col, type, isSecret, isRevealed } = cellData;
+        const cellKey = `${row}-${col}`;
+        const cell = cells.get(cellKey);
+
+        if (!cell) continue; // Skip if cell doesn't exist in current view
+
+        const icons = getIconClass(type);
+        const isRpgIconAvailable = await checkIconAvailability(icons.ra);
+
+        let iconElement;
+        if (isRpgIconAvailable) {
+            iconElement = `<i class="ra ${icons.ra}"></i>`;
+        } else {
+            iconElement = `<i class="material-icons">${icons.material}</i>`;
+        }
+
+        if (isSecret) {
+            cell.classList.add('secret-element');
+            if (isRevealed) {
+                cell.classList.add('revealed');
+            }
+            iconElement = `<div class="secret-container">${iconElement}</div>`;
+            
+            // Add click event to toggle reveal
+            cell.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the main cell click event
+                cell.classList.toggle('revealed');
+            });
+        }
+
+        cell.innerHTML = iconElement;
+        updateBorders(cell, row, col);
+    }
+}
+
+        // Event Listeners
+        gridContainer.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    const newScale = scale * delta;
+    if (newScale >= 0.5 && newScale <= 3) {
+        const rect = gridContainer.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left - 20; // Subtract 20px offset
+        const mouseY = e.clientY - rect.top - 20;  // Subtract 20px offset
+        
+        const gridX = mouseX / scale - translateX;
+        const gridY = mouseY / scale - translateY;
+        
+        translateX -= gridX * (delta - 1);
+        translateY -= gridY * (delta - 1);
+        
+        scale = newScale;
+        updateGridTransform();
+    }
+});
+
+gridContainer.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    const rect = gridContainer.getBoundingClientRect();
+    lastX = e.clientX - rect.left - 20; // Subtract 20px offset
+    lastY = e.clientY - rect.top - 20;  // Subtract 20px offset
+});
+
+        gridContainer.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const dx = e.clientX - lastX;
+                const dy = e.clientY - lastY;
+                translateX += dx / scale;
+                translateY += dy / scale;
+                lastX = e.clientX;
+                lastY = e.clientY;
+                updateGridTransform();
+            }
+        });
+
+        gridContainer.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        gridContainer.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        let lastDistance = 0;
+        gridContainer.addEventListener('touchstart', (e) => {
+    const rect = gridContainer.getBoundingClientRect();
+    if (e.touches.length === 2) {
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        lastDistance = Math.hypot(
+            touch1.clientX - touch2.clientX,
+            touch1.clientY - touch2.clientY
+        );
+    } else if (e.touches.length === 1) {
+        isDragging = true;
+        lastX = e.touches[0].clientX - rect.left - 20; // Subtract 20px offset
+        lastY = e.touches[0].clientY - rect.top - 20;  // Subtract 20px offset
+    }
+});
+
+        gridContainer.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (e.touches.length === 2) {
+                const distance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                const delta = distance / lastDistance;
+                const newScale = scale * delta;
+                if (newScale >= 0.5 && newScale <= 3) {
+                    const rect = gridContainer.getBoundingClientRect();
+                    const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+                    const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+                    
+                    const gridX = centerX / scale - translateX;
+                    const gridY = centerY / scale - translateY;
+                    
+                    translateX -= gridX * (delta - 1);
+                    translateY -= gridY * (delta - 1);
+                    
+                    scale = newScale;
+                    updateGridTransform();
+                }
+                lastDistance = distance;
+            } else if (e.touches.length === 1 && isDragging) {
+                const dx = e.touches[0].clientX - lastX;
+                const dy = e.touches[0].clientY - lastY;
+                translateX += dx / scale;
+                translateY += dy / scale;
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+                updateGridTransform();
+            }
+        });
+
+        gridContainer.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        readyBtn.addEventListener('click', () => {
+            startMenu.style.display = 'none';
+            createGrid();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!fabBtn.contains(e.target) && !fabMenu.contains(e.target)) {
+                fabMenu.style.display = 'none';
+                const mapElementsSubmenu = document.getElementById('mapElementsSubmenu');
+                if (mapElementsSubmenu) {
+                    mapElementsSubmenu.style.display = 'none';
+                }
+                currentMode = 'fill';
+            }
+        });
+
+        window.addEventListener('resize', createGrid);
+
+        // Initialization
+        async function initializeApp() {
+        await createFabMenu();
+        setupEventListeners();
+        setupLegend();
+        createCoordinateLabels(); // Add this line
+        createGrid();
+    }
+
+// Call this function when the document is ready
+document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
