@@ -7,164 +7,6 @@
     <meta name="description" content="Interactive grid-based building game with doors, enemies, and stairs.">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://nagoshiashumari.github.io/Rpg-Awesome/stylesheets/rpg-awesome.min.css">
-    <!-- <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            touch-action: manipulation;
-            user-select: none;
-            overflow: hidden;
-        }
-        #grid-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-        #grid {
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform-origin: 0 0;
-        }
-        .cell {
-            width: 40px;
-            height: 40px;
-            border: 1px solid #ccc;
-            position: absolute;
-            box-sizing: border-box;
-        }
-        .filled {
-            background-color: #87CEFA;
-        }
-        .cell.filled::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border: 2px solid black;
-            pointer-events: none;
-        }
-        .cell.filled.left::before { border-left-color: #87CEFA; }
-        .cell.filled.right::before { border-right-color: #87CEFA; }
-        .cell.filled.top::before { border-top-color: #87CEFA; }
-        .cell.filled.bottom::before { border-bottom-color: #87CEFA; }
-        .fab {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #2196F3;
-            color: white;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 56px;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            z-index: 1000;
-        }
-        .fab-menu {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            display: none;
-            flex-direction: column;
-            align-items: flex-end;
-            z-index: 1000;
-        }
-        .fab-item {
-            background-color: #1E88E5;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            text-align: center;
-            margin-bottom: 10px;
-            cursor: pointer;
-            position: relative;
-        }
-        .fab-item.red {
-            background-color: #E53935;
-        }
-        .fab-submenu {
-            display: none;
-            margin-right: 10px;
-        }
-        .fab-item i {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-        }
-        .cell i {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-        }
-        .fab-item .ra, .fab-item .material-icons, .cell .ra, .cell .material-icons {
-            line-height: 40px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-        }
-        #startMenu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            z-index: 2000;
-        }
-        #startMenu button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 18px;
-            cursor: pointer;
-        }
-        .secret-element .secret-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-    }
-    .secret-element .secret-container::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.7);
-        z-index: 1;
-    }
-    .secret-element .secret-container i {
-        position: relative;
-        z-index: 2;
-    }
-    .secret-element.revealed .secret-container::after {
-        display: none;
-    }
-    .secret-element:hover .secret-container {
-        opacity: 1;
-    } -->
-
     <style>
         body {
             margin: 0;
@@ -187,6 +29,7 @@
         right: 0;
         bottom: 0;
         overflow: hidden;
+        z-index: 1000;
     }
     #grid {
         position: absolute;
@@ -194,21 +37,7 @@
         left: 0;
         transform-origin: 0 0;
     }
-    /* #row-labels, #col-labels {
-        position: absolute;
-        z-index: 10;
-        font-size: 12px;
-        color: #333;
-        pointer-events: none;
-    }
-    #row-labels {
-        top: 20px;
-        left: 0;
-    }
-    #col-labels {
-        top: 0;
-        left: 20px;
-    } */
+
     .grid-label {
         position: absolute;
         display: flex;
@@ -287,6 +116,9 @@
         .fab-item.red {
             background-color: #E53935;
         }
+        .fab-item.yellow {
+        background-color: #FFC107;
+    }
         .fab-submenu {
             display: none;
             margin-right: 10px;
@@ -393,33 +225,32 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: bold;
         color: #333;
         background-color: #f0f0f0;
         border: 1px solid #ccc;
+        overflow: hidden;
+        white-space: nowrap;
     }
-    /* #row-labels, #col-labels {
-        position: absolute;
-        z-index: 10;
-        font-size: 12px;
-        color: #333;
-        pointer-events: none;
-    }
-    #row-labels {
-        top: 0;
-        left: 0;
-    }
-    #col-labels {
-        top: 0;
-        left: 0;
-    } */
-    .grid-label {
+       .grid-label {
         position: absolute;
         display: flex;
         align-items: center;
         justify-content: center;
         background-color: rgba(255, 255, 255, 0.7);
+    }
+    .cell.diagonal-ne {
+        background: linear-gradient(to top right, white 49%, black 49% 51%, #87CEFA 51%);
+    }
+    .cell.diagonal-se {
+        background: linear-gradient(to bottom right, white 49%, black 49% 51%, #87CEFA 51%);
+    }
+    .cell.diagonal-sw {
+        background: linear-gradient(to bottom left, white 49%, black 49% 51%, #87CEFA 51%);
+    }
+    .cell.diagonal-nw {
+        background: linear-gradient(to top left, white 49%, black 49% 51%, #87CEFA 51%);
     }
     </style>
 </head>
@@ -447,6 +278,7 @@
         // DOM Elements
         const grid = document.getElementById('grid');
         const gridContainer = document.getElementById('grid-container');
+        gridContainer.style.display = 'block';
         const fabMenu = document.getElementById('fabMenu');
         const fabBtn = document.getElementById('fabBtn');
         const startMenu = document.getElementById('startMenu');
@@ -460,6 +292,8 @@
         let translateY = 0;
         let isDragging = false;
         let lastX, lastY;
+        let isDiagonalModeActive = false;
+        let activeDiagonalDirection = '';
         const cellSize = 40;
         const gridSize = 100;
         const totalGridSize = gridSize * cellSize;
@@ -476,9 +310,17 @@
         { id: 'addNpc', icon: { ra: 'ra-player', material: 'person' } },
         { id: 'addTreasure', icon: { ra: 'ra-treasure-map', material: 'attach_money' } }
     ]},
+    { id: 'diagonalPath', icon: { ra: 'ra-stairs-goal', material: 'call_split' }, submenu: [
+        { id: 'diagonalPathNE', icon: { material: 'north_east' } },
+        { id: 'diagonalPathSE', icon: { material: 'south_east' } },
+        { id: 'diagonalPathSW', icon: { material: 'south_west' } },
+        { id: 'diagonalPathNW', icon: { material: 'north_west' } }
+    ]},
+    { id: 'eraser', icon: { ra: 'ra-eraser', material: 'auto_fix_high' }, class: 'yellow' },
     { id: 'saveMap', icon: { ra: 'ra-save', material: 'save' }, class: 'red' },
     { id: 'loadMap', icon: { ra: 'ra-folder', material: 'folder_open' }, class: 'red' }
 ];
+
 
 const iconMap = {
     'door': { ra: 'ra-wooden-door', material: 'door_front' },
@@ -500,16 +342,33 @@ const legendItems = [
         { type: 'treasure', label: 'Treasure' }
     ];
 
-        // Grid Functions
-        function createGrid() {
-            grid.innerHTML = '';
-            grid.style.width = `${totalGridSize}px`;
-            grid.style.height = `${totalGridSize}px`;
-            updateVisibleCells();
-            mapData = Array(gridSize).fill().map(() => Array(gridSize).fill(null));
-        }
+    function createGrid() {
+    grid.innerHTML = '';
+    grid.style.width = `${totalGridSize}px`;
+    grid.style.height = `${totalGridSize}px`;
+    mapData = Array(gridSize).fill().map(() => Array(gridSize).fill(null));
+    
+    // Set initial view to top-left corner
+    translateX = 0;
+    translateY = 0;
+    scale = 1;
+    
+    updateGridTransform();
+}
 
-        function updateVisibleCells() {
+// Add this function to generate column labels
+function getColumnLabel(col) {
+    const baseChar = Math.floor(col / 4);
+    const subIndex = col % 4;
+    if (subIndex === 0) {
+        return String.fromCharCode(65 + baseChar); // A, B, C, ...
+    } else {
+        return `${String.fromCharCode(65 + baseChar)}${subIndex}`;
+    }
+}
+
+// Update the updateVisibleCells function
+function updateVisibleCells() {
     const visibleStartCol = Math.max(0, Math.floor(-translateX / cellSize));
     const visibleStartRow = Math.max(0, Math.floor(-translateY / cellSize));
     const visibleEndCol = Math.min(gridSize, Math.ceil((-translateX + window.innerWidth / scale) / cellSize));
@@ -530,7 +389,7 @@ const legendItems = [
                     if (row === 0 && col === 0) {
                         cell.textContent = '';  // Leave top-left cell empty
                     } else if (row === 0) {
-                        cell.textContent = String.fromCharCode(64 + col);  // A, B, C, ...
+                        cell.textContent = getColumnLabel(col - 1);  // Use your column labeling function
                     } else {
                         cell.textContent = row;
                     }
@@ -595,27 +454,74 @@ function screenToGridCoordinates(screenX, screenY) {
     return { row, col };
 }
 
+function updateDiagonalModeIndicator() {
+    const diagonalPathButton = document.getElementById('diagonalPath');
+    if (diagonalPathButton) {
+        diagonalPathButton.style.backgroundColor = isDiagonalModeActive ? '#4CAF50' : '#1E88E5';
+    }
+    // Update submenu item colors
+    document.querySelectorAll('#diagonalPathSubmenu .fab-item').forEach(item => {
+        item.style.backgroundColor = item.id.toLowerCase() === activeDiagonalDirection ? '#4CAF50' : '#1E88E5';
+    });
+}
+
+// Update the handleCellClick function
 function handleCellClick(cell, row, col) {
     if (row === 0 || col === 0) return;  // Ignore clicks on coordinate labels
-    
-    switch (currentMode) {
-        case 'fill':
-            toggleFill(cell, row, col);
-            break;
-        case 'door':
-        case 'enemy':
-        case 'stairs':
-        case 'trap':
-        case 'npc':
-        case 'treasure':
-            addMapElement(cell, row, col);
-            break;
+
+    if (isDiagonalModeActive && activeDiagonalDirection) {
+        toggleDiagonalPath(cell, row, col, activeDiagonalDirection);
+    } else {
+        switch (currentMode) {
+            case 'fill':
+                toggleFill(cell, row, col);
+                break;
+            case 'eraser':
+                eraseCell(cell, row, col);
+                break;
+            case 'door':
+            case 'enemy':
+            case 'stairs':
+            case 'trap':
+            case 'npc':
+            case 'treasure':
+                addMapElement(cell, row, col);
+                break;
+        }
     }
 }
 
-        function toggleFill(cell, row, col) {
-    cell.classList.toggle('filled');
+function eraseCell(cell, row, col) {
+    // Remove any icons from the cell
+    cell.innerHTML = '';
+    
+    // Remove all classes and reset background
+    cell.className = 'cell';
+    cell.style.background = '';
+    
+    // Update mapData
+    mapData[row][col] = null;
+    
+    // Update cell appearance
     updateBorders(cell, row, col);
+}
+
+function updateCellAppearance(cell, row, col) {
+    // This function remains the same
+    if (mapData[row] && mapData[row][col] === 'filled') {
+        cell.classList.add('filled');
+    } else {
+        cell.classList.remove('filled');
+    }
+    updateBorders(cell, row, col);
+}
+
+function toggleFill(cell, row, col) {
+    // Store the current transform values
+    const oldTranslateX = translateX;
+    const oldTranslateY = translateY;
+
+    cell.classList.toggle('filled');
     
     if (cell.classList.contains('filled')) {
         mapData[row][col] = 'filled';
@@ -623,28 +529,70 @@ function handleCellClick(cell, row, col) {
         mapData[row][col] = null;
         cell.innerHTML = ''; // Clear any existing content when unfilling
     }
+    
+    updateBorders(cell, row, col);
+
+    // Check if the transform has changed unexpectedly
+    if (translateX !== oldTranslateX || translateY !== oldTranslateY) {
+        // Reset to old values if changed
+        translateX = oldTranslateX;
+        translateY = oldTranslateY;
+        updateGridTransform();
+    }
 }
 
-        function updateBorders(cell, row, col) {
-            const directions = [
-                { name: 'left', condition: col > 0, neighbor: getCell(row, col - 1) },
-                { name: 'right', condition: col < gridSize - 1, neighbor: getCell(row, col + 1) },
-                { name: 'top', condition: row > 0, neighbor: getCell(row - 1, col) },
-                { name: 'bottom', condition: row < gridSize - 1, neighbor: getCell(row + 1, col) }
-            ];
+function toggleDiagonalPath(cell, row, col, direction) {
+    const diagonalClass = `diagonal-${direction.slice(-2).toLowerCase()}`;
+    
+    if (cell.classList.contains(diagonalClass)) {
+        // Remove diagonal path completely
+        cell.classList.remove(diagonalClass, 'diagonal-ne', 'diagonal-se', 'diagonal-sw', 'diagonal-nw', 'filled');
+        cell.style.background = ''; // Reset the background
+        mapData[row][col] = null;
+    } else {
+        // Add diagonal path
+        cell.classList.remove('diagonal-ne', 'diagonal-se', 'diagonal-sw', 'diagonal-nw');
+        cell.classList.add(diagonalClass, 'filled');
+        mapData[row][col] = direction;
+    }
 
-            directions.forEach(dir => {
-                if (dir.condition && dir.neighbor) {
-                    if (cell.classList.contains('filled') && dir.neighbor.classList.contains('filled')) {
-                        cell.classList.add(dir.name);
-                        dir.neighbor.classList.add(getOppositeDirection(dir.name));
-                    } else {
-                        cell.classList.remove(dir.name);
-                        dir.neighbor.classList.remove(getOppositeDirection(dir.name));
-                    }
+    updateBorders(cell, row, col);
+}
+
+function updateBorders(cell, row, col) {
+    const directions = [
+        { name: 'left', condition: col > 0, neighbor: getCell(row, col - 1) },
+        { name: 'right', condition: col < gridSize - 1, neighbor: getCell(row, col + 1) },
+        { name: 'top', condition: row > 0, neighbor: getCell(row - 1, col) },
+        { name: 'bottom', condition: row < gridSize - 1, neighbor: getCell(row + 1, col) }
+    ];
+
+    directions.forEach(dir => {
+        if (dir.condition && dir.neighbor) {
+            const isDiagonal = cell.classList.contains('diagonal-ne') || 
+                                cell.classList.contains('diagonal-se') || 
+                                cell.classList.contains('diagonal-sw') || 
+                                cell.classList.contains('diagonal-nw');
+            const isNeighborDiagonal = dir.neighbor.classList.contains('diagonal-ne') || 
+                                       dir.neighbor.classList.contains('diagonal-se') || 
+                                       dir.neighbor.classList.contains('diagonal-sw') || 
+                                       dir.neighbor.classList.contains('diagonal-nw');
+
+            if (cell.classList.contains('filled') && dir.neighbor.classList.contains('filled')) {
+                if (!isDiagonal && !isNeighborDiagonal) {
+                    cell.classList.add(dir.name);
+                    dir.neighbor.classList.add(getOppositeDirection(dir.name));
+                } else {
+                    cell.classList.remove(dir.name);
+                    dir.neighbor.classList.remove(getOppositeDirection(dir.name));
                 }
-            });
+            } else {
+                cell.classList.remove(dir.name);
+                dir.neighbor.classList.remove(getOppositeDirection(dir.name));
+            }
         }
+    });
+}
 
         function getCell(row, col) {
             return cells.get(`${row}-${col}`);
@@ -673,18 +621,27 @@ function handleCellClick(cell, row, col) {
         }
 
         async function createIcon(iconObj) {
-            const isRpgIconAvailable = await checkIconAvailability(iconObj.ra);
-            const icon = document.createElement('i');
-            
-            if (isRpgIconAvailable) {
-                icon.className = `ra ${iconObj.ra}`;
-            } else {
-                icon.className = 'material-icons';
-                icon.textContent = iconObj.material;
-            }
-            
-            return icon;
+    if (iconObj.ra) {
+        const isRpgIconAvailable = await checkIconAvailability(iconObj.ra);
+        const icon = document.createElement('i');
+        
+        if (isRpgIconAvailable) {
+            icon.className = `ra ${iconObj.ra}`;
+        } else {
+            icon.className = 'material-icons';
+            icon.textContent = iconObj.material;
         }
+        
+        return icon;
+    } else if (iconObj.material) {
+        const icon = document.createElement('i');
+        icon.className = 'material-icons';
+        icon.textContent = iconObj.material;
+        return icon;
+    }
+    
+    return null;
+}
 
         function getIconClass(mode) {
     return iconMap[mode] || { ra: '', material: '' };
@@ -692,64 +649,76 @@ function handleCellClick(cell, row, col) {
 
 async function addMapElement(cell, row, col) {
     if (cell.classList.contains('filled')) {
-        const icons = getIconClass(currentMode);
-        const isRpgIconAvailable = await checkIconAvailability(icons.ra);
+        const isDiagonal = cell.classList.contains('diagonal-ne') || 
+                           cell.classList.contains('diagonal-se') || 
+                           cell.classList.contains('diagonal-sw') || 
+                           cell.classList.contains('diagonal-nw');
+        
+        // Only add elements to the blue part of diagonal paths or non-diagonal filled cells
+        if (!isDiagonal || cell.classList.contains('diagonal-ne') || cell.classList.contains('diagonal-sw')) {
+            const icons = getIconClass(currentMode);
+            const isRpgIconAvailable = await checkIconAvailability(icons.ra);
 
-        let iconElement;
-        if (isRpgIconAvailable) {
-            iconElement = `<i class="ra ${icons.ra}"></i>`;
-        } else {
-            iconElement = `<i class="material-icons">${icons.material}</i>`;
+            let iconElement;
+            if (isRpgIconAvailable) {
+                iconElement = `<i class="ra ${icons.ra}"></i>`;
+            } else {
+                iconElement = `<i class="material-icons">${icons.material}</i>`;
+            }
+
+            if (currentMode === 'secretdoor' || currentMode === 'trap') {
+                cell.classList.add('secret-element');
+                iconElement = `<div class="secret-container">${iconElement}</div>`;
+               
+                // Add click event to toggle reveal
+                cell.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent triggering the main cell click event
+                    cell.classList.toggle('revealed');
+                });
+            }
+
+            cell.innerHTML = iconElement;
+            mapData[row][col] = currentMode;
         }
-
-        if (currentMode === 'secretdoor' || currentMode === 'trap') {
-            cell.classList.add('secret-element');
-            iconElement = `<div class="secret-container">${iconElement}</div>`;
-            
-            // Add click event to toggle reveal
-            cell.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent triggering the main cell click event
-                cell.classList.toggle('revealed');
-            });
-        }
-
-        cell.innerHTML = iconElement;
-        mapData[row][col] = currentMode;
     }
 }
 
         // FAB Menu Functions
         async function createFabMenu() {
-            for (const item of menuItems) {
-                const fabItem = document.createElement('div');
-                fabItem.id = item.id;
-                fabItem.className = `fab-item ${item.class || ''}`;
-                
-                const icon = await createIcon(item.icon);
-                fabItem.appendChild(icon);
-                
-                fabMenu.appendChild(fabItem);
-
-                if (item.submenu) {
-                    const submenu = document.createElement('div');
-                    submenu.className = 'fab-submenu';
-                    submenu.id = `${item.id}Submenu`;
-                    
-                    for (const subItem of item.submenu) {
-                        const subFabItem = document.createElement('div');
-                        subFabItem.id = subItem.id;
-                        subFabItem.className = 'fab-item';
-                        
-                        const subIcon = await createIcon(subItem.icon);
-                        subFabItem.appendChild(subIcon);
-                        
-                        submenu.appendChild(subFabItem);
-                    }
-                    
-                    fabMenu.appendChild(submenu);
-                }
-            }
+    for (const item of menuItems) {
+        const fabItem = document.createElement('div');
+        fabItem.id = item.id;
+        fabItem.className = `fab-item ${item.class || ''}`;
+        
+        const icon = await createIcon(item.icon);
+        if (icon) {
+            fabItem.appendChild(icon);
         }
+        
+        fabMenu.appendChild(fabItem);
+
+        if (item.submenu) {
+            const submenu = document.createElement('div');
+            submenu.className = 'fab-submenu';
+            submenu.id = `${item.id}Submenu`;
+            
+            for (const subItem of item.submenu) {
+                const subFabItem = document.createElement('div');
+                subFabItem.id = subItem.id;
+                subFabItem.className = 'fab-item';
+                
+                const subIcon = await createIcon(subItem.icon);
+                if (subIcon) {
+                    subFabItem.appendChild(subIcon);
+                }
+                
+                submenu.appendChild(subFabItem);
+            }
+            
+            fabMenu.appendChild(submenu);
+        }
+    }
+}
 
         async function createLegend() {
     const legendContent = document.getElementById('legendContent');
@@ -806,37 +775,84 @@ function setupLegend() {
     createLegend();
 }
 
-        function setupEventListeners() {
-            const mapElements = document.getElementById('mapElements');
-            const mapElementsSubmenu = document.getElementById('mapElementsSubmenu');
-            const saveMapBtn = document.getElementById('saveMap');
-            const loadMapBtn = document.getElementById('loadMap');
+function setupEventListeners() {
+    const fabMenuItems = document.querySelectorAll('.fab-item');
+    
+    fabBtn.addEventListener('click', () => {
+        fabMenu.style.display = fabMenu.style.display === 'none' ? 'flex' : 'none';
+    });
 
-            if (!mapElements || !mapElementsSubmenu || !saveMapBtn || !loadMapBtn) {
-                console.error('One or more FAB menu elements are missing');
-                return;
-            }
+    fabMenuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            const mode = e.currentTarget.id;
+            const submenuId = `${mode}Submenu`;
+            const submenu = document.getElementById(submenuId);
 
-            fabBtn.addEventListener('click', () => {
-                fabMenu.style.display = fabMenu.style.display === 'none' ? 'flex' : 'none';
-            });
-
-            mapElements.addEventListener('click', () => {
-                mapElementsSubmenu.style.display = mapElementsSubmenu.style.display === 'none' ? 'flex' : 'none';
-            });
-
-            document.querySelectorAll('#mapElementsSubmenu .fab-item').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    currentMode = e.currentTarget.id.replace('add', '').replace('mark', '').toLowerCase();
-                    mapElementsSubmenu.style.display = 'none';
+            if (submenu) {
+                // Toggle submenu visibility
+                submenu.style.display = submenu.style.display === 'none' ? 'flex' : 'none';
+                
+                // Hide other submenus
+                document.querySelectorAll('.fab-submenu').forEach(sub => {
+                    if (sub.id !== submenuId) {
+                        sub.style.display = 'none';
+                    }
                 });
+
+                // If it's the diagonal path menu, toggle the diagonal mode
+                if (mode === 'diagonalPath') {
+                    isDiagonalModeActive = !isDiagonalModeActive;
+                    if (!isDiagonalModeActive) {
+                        currentMode = 'fill';
+                        activeDiagonalDirection = '';
+                    }
+                    updateDiagonalModeIndicator();
+                }
+            } else {
+                // Handle non-submenu items
+                isDiagonalModeActive = false;
+                activeDiagonalDirection = '';
+                currentMode = mode;
+                updateDiagonalModeIndicator();
+                if (mode === 'saveMap') saveMap();
+                if (mode === 'loadMap') loadMap();
+                
+                // Hide all submenus when a non-submenu item is clicked
+                document.querySelectorAll('.fab-submenu').forEach(sub => {
+                    sub.style.display = 'none';
+                });
+            }
+        });
+    });
+
+    // Set up event listeners for submenu items
+    document.querySelectorAll('.fab-submenu .fab-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent triggering the main menu item click
+            const newMode = e.currentTarget.id.toLowerCase();
+            if (newMode.startsWith('diagonalpath')) {
+                isDiagonalModeActive = true;
+                activeDiagonalDirection = newMode;
+                currentMode = newMode;
+            } else {
+                isDiagonalModeActive = false;
+                activeDiagonalDirection = '';
+                currentMode = newMode;
+            }
+            updateDiagonalModeIndicator();
+        });
+    });
+
+    // Close FAB menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!fabBtn.contains(e.target) && !fabMenu.contains(e.target)) {
+            fabMenu.style.display = 'none';
+            document.querySelectorAll('.fab-submenu').forEach(sub => {
+                sub.style.display = 'none';
             });
-
-            saveMapBtn.addEventListener('click', saveMap);
-            loadMapBtn.addEventListener('click', loadMap);
-
-
         }
+    });
+}
 
         // Save and Load Functions
         function saveMap() {
@@ -1065,9 +1081,10 @@ gridContainer.addEventListener('mousedown', (e) => {
         });
 
         readyBtn.addEventListener('click', () => {
-            startMenu.style.display = 'none';
-            createGrid();
-        });
+    startMenu.style.display = 'none';
+    // Instead of createGrid(), just update the visible cells
+    updateVisibleCells();
+});
 
         document.addEventListener('click', (e) => {
             if (!fabBtn.contains(e.target) && !fabMenu.contains(e.target)) {
@@ -1084,15 +1101,16 @@ gridContainer.addEventListener('mousedown', (e) => {
 
         // Initialization
         async function initializeApp() {
-        await createFabMenu();
-        setupEventListeners();
-        setupLegend();
-        createCoordinateLabels(); // Add this line
-        createGrid();
+    await createFabMenu();
+    setupEventListeners();
+    setupLegend();
     }
 
 // Call this function when the document is ready
-document.addEventListener('DOMContentLoaded', initializeApp);
+document.addEventListener('DOMContentLoaded', () => {
+    initializeApp();
+    createGrid(); // Create the grid immediately
+});
     </script>
 </body>
 </html>
