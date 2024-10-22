@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TapMap</title>
-    <meta name="description" content="A classic D&D grid mapper with doors, enemies, stairs, etc.">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://nagoshiashumari.github.io/Rpg-Awesome/stylesheets/rpg-awesome.min.css">
+    <meta name="description" content="A classic D&D grid mapper with doors, enemies, stairs, etc." />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="https://nagoshiashumari.github.io/Rpg-Awesome/stylesheets/rpg-awesome.min.css" />
     <style>
         body {
             margin: 0;
@@ -16,77 +17,95 @@
             user-select: none;
             overflow: hidden;
         }
+
         #map-area {
-        position: relative;
-        width: 100%;
-        height: 100vh;
-        overflow: hidden;
-    }
-    #grid-container {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        right: 0;
-        bottom: 0;
-        overflow: hidden;
-        z-index: 1000;
-    }
-    #grid {
-        position: absolute;
-        top: 0;
-        left: 0;
-        transform-origin: 0 0;
-    }
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-    .grid-label {
-        position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(255, 255, 255, 0.7);
-    }
-    .cell {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #ccc;
-    position: absolute;
-    box-sizing: border-box;
-}
-.cell i {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-    z-index: 10;
-    pointer-events: none;
-    /* Debug styles */
-    color: black;
-    text-shadow: 1px 1px 1px white;
-}
+        #grid-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: 1000;
+        }
 
-.cell.filled {
-    background-color: #87CEFA;
-}
+        #grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: 0 0;
+        }
 
-.cell.filled::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #87CEFA;
-    border: 2px solid black;
-    pointer-events: none;
-    z-index: 1;
-}
+        .grid-label {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
 
-        .cell.filled.left::before { border-left-color: #87CEFA; }
-        .cell.filled.right::before { border-right-color: #87CEFA; }
-        .cell.filled.top::before { border-top-color: #87CEFA; }
-        .cell.filled.bottom::before { border-bottom-color: #87CEFA; }
-        .cell i, .cell .secret-container {
+        .cell {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ccc;
+            position: absolute;
+            box-sizing: border-box;
+        }
+
+        .cell i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            z-index: 10;
+            pointer-events: none;
+            /* Debug styles */
+            color: black;
+            text-shadow: 1px 1px 1px white;
+        }
+
+        .cell.filled {
+            background-color: #87cefa;
+        }
+
+        .cell.filled::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #87cefa;
+            border: 2px solid black;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .cell.filled.left::before {
+            border-left-color: #87cefa;
+        }
+
+        .cell.filled.right::before {
+            border-right-color: #87cefa;
+        }
+
+        .cell.filled.top::before {
+            border-top-color: #87cefa;
+        }
+
+        .cell.filled.bottom::before {
+            border-bottom-color: #87cefa;
+        }
+
+        .cell i,
+        .cell .secret-container {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -94,11 +113,12 @@
             font-size: 24px;
             z-index: 2;
         }
+
         .fab {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: #2196F3;
+            background-color: #2196f3;
             color: white;
             width: 56px;
             height: 56px;
@@ -107,9 +127,10 @@
             line-height: 56px;
             font-size: 24px;
             cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
             z-index: 1000;
         }
+
         .fab-menu {
             position: fixed;
             bottom: 80px;
@@ -119,8 +140,9 @@
             align-items: flex-end;
             z-index: 1000;
         }
+
         .fab-item {
-            background-color: #1E88E5;
+            background-color: #1e88e5;
             color: white;
             width: 40px;
             height: 40px;
@@ -130,16 +152,20 @@
             cursor: pointer;
             position: relative;
         }
+
         .fab-item.red {
-            background-color: #E53935;
+            background-color: #e53935;
         }
+
         .fab-item.yellow {
-        background-color: #FFC107;
-    }
+            background-color: #ffc107;
+        }
+
         .fab-submenu {
             display: none;
             margin-right: 10px;
         }
+
         .fab-item i {
             position: absolute;
             top: 50%;
@@ -147,13 +173,14 @@
             transform: translate(-50%, -50%);
             font-size: 24px;
         }
+
         #startMenu {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.8);
+            background-color: rgba(0, 0, 0, 0.8);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -161,17 +188,20 @@
             color: white;
             z-index: 2000;
         }
+
         #startMenu button {
             margin-top: 20px;
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
         }
+
         .secret-element .secret-container {
             position: relative;
             width: 100%;
             height: 100%;
         }
+
         .secret-element .secret-container::after {
             content: '';
             position: absolute;
@@ -182,204 +212,248 @@
             background: rgba(255, 255, 255, 0.7);
             z-index: 1;
         }
+
         .secret-element .secret-container i {
             position: relative;
             z-index: 2;
         }
+
         .secret-element.revealed .secret-container::after {
             display: none;
         }
+
         .secret-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-}
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+
         .legend {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        background-color: rgba(255, 255, 255, 0.9);
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 10px;
-        z-index: 1000;
-        max-width: 200px;
-        display: none;
-    }
-    .legend h3 {
-        margin-top: 0;
-        margin-bottom: 10px;
-    }
-    .legend-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
-    }
-    .legend-icon {
-        width: 24px;
-        height: 24px;
-        margin-right: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .legend-text {
-        font-size: 14px;
-    }
-    #toggleLegend {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        z-index: 1001;
-        background-color: #2196F3;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .coordinate-label {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: bold;
-        color: #333;
-        background-color: #f0f0f0;
-        border: 1px solid #ccc;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-       .grid-label {
-        position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(255, 255, 255, 0.7);
-    }
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            z-index: 1000;
+            max-width: 200px;
+            display: none;
+        }
 
-.cell.diagonal-se {
-    background: linear-gradient(to bottom right, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
-    border: 1px solid #ccc !important;
-}
+        .legend h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
 
-.cell.diagonal-sw {
-    background: linear-gradient(to bottom left, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
-    border: 1px solid #ccc !important;
-}
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
 
-.cell.diagonal-ne {
-    background: linear-gradient(to top right, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
-    border: 1px solid #ccc !important;
-}
+        .legend-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.cell.diagonal-nw {
-    background: linear-gradient(to top left, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
-    border: 1px solid #ccc !important;
-}
+        .legend-text {
+            font-size: 14px;
+        }
 
-.cell.diagonal-ne::before,
-.cell.diagonal-se::before,
-.cell.diagonal-sw::before,
-.cell.diagonal-nw::before {
-    border: none !important;
-}
+        #toggleLegend {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1001;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.cell.filled.connected-left::before { 
-    border-left: none !important; 
-}
-.cell.filled.connected-right::before { 
-    border-right: none !important; 
-}
-.cell.filled.connected-top::before { 
-    border-top: none !important; 
-}
-.cell.filled.connected-bottom::before { 
-    border-bottom: none !important; 
-}
-.diagonal-rotate-fab {
-    position: fixed;
-    bottom: 20px;
-    right: 90px; /* Position it to the left of the main FAB */
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: #1E88E5;
-    color: white;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    z-index: 1000;
-    transition: background-color 0.3s ease;
-}
+        .coordinate-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            overflow: hidden;
+            white-space: nowrap;
+        }
 
-.diagonal-rotate-fab i {
-    font-size: 20px;
-}
+        .grid-label {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
 
-.diagonal-rotate-fab.active {
-    background-color: #4CAF50;
-}
+        .cell.diagonal-se {
+            background: linear-gradient(to bottom right,
+                    #ffffff 49%,
+                    #000000 49% 51%,
+                    #87cefa 51%);
+            border: 1px solid #ccc !important;
+        }
 
-.cell.diagonal-ne {
-    background: linear-gradient(to top right, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
-    border: 1px solid #ccc !important;
-}
+        .cell.diagonal-sw {
+            background: linear-gradient(to bottom left,
+                    #ffffff 49%,
+                    #000000 49% 51%,
+                    #87cefa 51%);
+            border: 1px solid #ccc !important;
+        }
 
-.cell.diagonal-se {
-    background: linear-gradient(to bottom right, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
-    border: 1px solid #ccc !important;
-}
+        .cell.diagonal-ne {
+            background: linear-gradient(to top right,
+                    #ffffff 49%,
+                    #000000 49% 51%,
+                    #87cefa 51%);
+            border: 1px solid #ccc !important;
+        }
 
-.cell.diagonal-sw {
-    background: linear-gradient(to bottom left, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
-    border: 1px solid #ccc !important;
-}
+        .cell.diagonal-nw {
+            background: linear-gradient(to top left,
+                    #ffffff 49%,
+                    #000000 49% 51%,
+                    #87cefa 51%);
+            border: 1px solid #ccc !important;
+        }
 
-.cell.diagonal-nw {
-    background: linear-gradient(to top left, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
-    border: 1px solid #ccc !important;
-}
+        .cell.diagonal-ne::before,
+        .cell.diagonal-se::before,
+        .cell.diagonal-sw::before,
+        .cell.diagonal-nw::before {
+            border: none !important;
+        }
 
+        .cell.filled.connected-left::before {
+            border-left: none !important;
+        }
 
+        .cell.filled.connected-right::before {
+            border-right: none !important;
+        }
 
-.cell.diagonal-ne i,
-.cell.diagonal-se i,
-.cell.diagonal-sw i,
-.cell.diagonal-nw i {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    font-size: 16px;
-    z-index: 20 !important; /* Ensure icon is above the diagonal */
-    pointer-events: none;
-    color: black; /* Make sure icon is visible */
-    text-shadow: 1px 1px 1px white; /* Optional: add contrast */
-}
+        .cell.filled.connected-top::before {
+            border-top: none !important;
+        }
 
-.cell.diagonal-ne .secret-container i,
-.cell.diagonal-se .secret-container i,
-.cell.diagonal-sw .secret-container i,
-.cell.diagonal-nw .secret-container i {
-    font-size: 16px;
-}
+        .cell.filled.connected-bottom::before {
+            border-bottom: none !important;
+        }
 
+        .diagonal-rotate-fab {
+            position: fixed;
+            bottom: 20px;
+            right: 90px;
+            /* Position it to the left of the main FAB */
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #1e88e5;
+            color: white;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .diagonal-rotate-fab i {
+            font-size: 20px;
+        }
+
+        .diagonal-rotate-fab.active {
+            background-color: #4caf50;
+        }
+
+        .cell.diagonal-ne {
+            background: linear-gradient(to top right,
+                    #ffffff 49%,
+                    #000000 49% 51%,
+                    #87cefa 51%);
+            border: 1px solid #ccc !important;
+        }
+
+        .cell.diagonal-se {
+            background: linear-gradient(to bottom right,
+                    #ffffff 49%,
+                    #000000 49% 51%,
+                    #87cefa 51%);
+            border: 1px solid #ccc !important;
+        }
+
+        .cell.diagonal-sw {
+            background: linear-gradient(to bottom left,
+                    #ffffff 49%,
+                    #000000 49% 51%,
+                    #87cefa 51%);
+            border: 1px solid #ccc !important;
+        }
+
+        .cell.diagonal-nw {
+            background: linear-gradient(to top left,
+                    #ffffff 49%,
+                    #000000 49% 51%,
+                    #87cefa 51%);
+            border: 1px solid #ccc !important;
+        }
+
+        .cell.diagonal-ne i,
+        .cell.diagonal-se i,
+        .cell.diagonal-sw i,
+        .cell.diagonal-nw i {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            z-index: 20 !important;
+            /* Ensure icon is above the diagonal */
+            pointer-events: none;
+            color: black;
+            /* Make sure icon is visible */
+            text-shadow: 1px 1px 1px white;
+            /* Optional: add contrast */
+        }
+
+        .cell.diagonal-ne .secret-container i,
+        .cell.diagonal-se .secret-container i,
+        .cell.diagonal-sw .secret-container i,
+        .cell.diagonal-nw .secret-container i {
+            font-size: 16px;
+        }
     </style>
 </head>
+
 <body>
     <div id="startMenu">
         <h1>TapMap</h1>
-        <p>Tap grid squares to fill them. Use the menu to add doors, enemies, stairs, etc.</p>
+        <p>
+            Tap grid squares to fill them. Use the menu to add doors, enemies,
+            stairs, etc.
+        </p>
         <button id="readyBtn">Ready</button>
     </div>
     <div id="map-area">
@@ -396,1200 +470,1325 @@
     </div>
     <script>
         // DOM Elements
-        const grid = document.getElementById('grid');
-        const gridContainer = document.getElementById('grid-container');
-        gridContainer.style.display = 'block';
-        const fabMenu = document.getElementById('fabMenu');
-        const fabBtn = document.getElementById('fabBtn');
-        const startMenu = document.getElementById('startMenu');
-        const readyBtn = document.getElementById('readyBtn');
+        const grid = document.getElementById('grid')
+        const gridContainer = document.getElementById('grid-container')
+        gridContainer.style.display = 'block'
+        const fabMenu = document.getElementById('fabMenu')
+        const fabBtn = document.getElementById('fabBtn')
+        const startMenu = document.getElementById('startMenu')
+        const readyBtn = document.getElementById('readyBtn')
 
         // Grid Configuration
-        let currentMode = 'fill';
-        let mapData = [];
-        let scale = 1;
-        let translateX = 0;
-        let translateY = 0;
-        let isDragging = false;
-        let lastX, lastY;
-        let isDiagonalModeActive = false;
-        let activeDiagonalDirection = '';
-        const cellSize = 40;
-        const gridSize = 100;
-        const totalGridSize = gridSize * cellSize;
-        const cells = new Map();
+        let currentMode = 'fill'
+        let mapData = []
+        let scale = 1
+        let translateX = 0
+        let translateY = 0
+        let isDragging = false
+        let lastX, lastY
+        let isDiagonalModeActive = false
+        let activeDiagonalDirection = ''
+        const cellSize = 40
+        const gridSize = 100
+        const totalGridSize = gridSize * cellSize
+        const cells = new Map()
 
         // FAB Menu Configuration
         const menuItems = [
-    { id: 'mapElements', icon: { ra: 'ra-castle-flag', material: 'map' }, submenu: [
-        { id: 'addDoor', icon: { ra: 'ra-wooden-door', material: 'door_front' } },
-        { id: 'addSecretDoor', icon: { ra: 'ra-secret-door', material: 'door_sliding' } },
-        { id: 'markEnemy', icon: { ra: 'ra-dragon', material: 'pest_control' } },
-        { id: 'markStairs', icon: { ra: 'ra-tower', material: 'stairs' } },
-        { id: 'addTrap', icon: { ra: 'ra-spikes-full', material: 'warning' } },
-        { id: 'addNpc', icon: { ra: 'ra-player', material: 'person' } },
-        { id: 'addTreasure', icon: { ra: 'ra-treasure-map', material: 'attach_money' } }
-    ]},
-    { id: 'diagonalPath', icon: { material: 'call_split' } },
-    { id: 'eraser', icon: { ra: 'ra-eraser', material: 'auto_fix_high' }, class: 'yellow' },
-    { id: 'saveMap', icon: { ra: 'ra-save', material: 'save' }, class: 'red' },
-    { id: 'loadMap', icon: { ra: 'ra-folder', material: 'folder_open' }, class: 'red' }
-];
-
-let diagonalDirections = ['NE', 'SE', 'SW', 'NW'];
-let currentDiagonalIndex = 0;
-
-const iconMap = {
-    'door': { ra: 'ra-wooden-door', material: 'door_front' },
-    'secretdoor': { ra: 'ra-secret-door', material: 'door_sliding' },
-    'enemy': { ra: 'ra-dragon', material: 'pest_control' },
-    'stairs': { ra: 'ra-tower', material: 'stairs' },
-    'trap': { ra: 'ra-spikes-full', material: 'warning' },
-    'npc': { ra: 'ra-player', material: 'person' },
-    'treasure': { ra: 'ra-treasure-map', material: 'attach_money' }
-};
-const legendItems = [
-        { type: 'door', label: 'Door' },
-        { type: 'secretdoor', label: 'Secret Door' },
-        { type: 'enemy', label: 'Enemy' },
-        { type: 'stairs', label: 'Stairs' },
-        { type: 'trap', label: 'Trap' },
-        { type: 'npc', label: 'NPC' },
-        { type: 'treasure', label: 'Treasure' }
-    ];
-
-    function createGrid() {
-    grid.innerHTML = '';
-    grid.style.width = `${totalGridSize}px`;
-    grid.style.height = `${totalGridSize}px`;
-    mapData = Array(gridSize).fill().map(() => Array(gridSize).fill(null));
-    
-    // Set initial view to top-left corner
-    translateX = 0;
-    translateY = 0;
-    scale = 1;
-    
-    updateGridTransform();
-}
-
-// Add this function to generate column labels
-function getColumnLabel(col) {
-    const baseChar = Math.floor(col / 4);
-    const subIndex = col % 4;
-    if (subIndex === 0) {
-        return String.fromCharCode(65 + baseChar); // A, B, C, ...
-    } else {
-        return `${String.fromCharCode(65 + baseChar)}${subIndex}`;
-    }
-}
-
-// Update the updateVisibleCells function
-// Helper function to create a cell
-function createCell(row, col) {
-    const cellId = `${row}-${col}`;
-    let cell = cells.get(cellId);
-    
-    if (!cell) {
-        cell = document.createElement('div');
-        cell.classList.add('cell');
-        cell.style.left = `${col * cellSize}px`;
-        cell.style.top = `${row * cellSize}px`;
-        
-        if (row === 0 || col === 0) {
-            cell.classList.add('coordinate-label');
-            if (row === 0 && col === 0) {
-                cell.textContent = '';
-            } else if (row === 0) {
-                cell.textContent = getColumnLabel(col - 1);
-            } else {
-                cell.textContent = row;
+            {
+                id: 'mapElements',
+                icon: { ra: 'ra-castle-flag', material: 'map' },
+                submenu: [
+                    {
+                        id: 'addDoor',
+                        icon: { ra: 'ra-wooden-door', material: 'door_front' }
+                    },
+                    {
+                        id: 'addSecretDoor',
+                        icon: { ra: 'ra-secret-door', material: 'door_sliding' }
+                    },
+                    {
+                        id: 'markEnemy',
+                        icon: { ra: 'ra-dragon', material: 'pest_control' }
+                    },
+                    { id: 'markStairs', icon: { ra: 'ra-tower', material: 'stairs' } },
+                    {
+                        id: 'addTrap',
+                        icon: { ra: 'ra-spikes-full', material: 'warning' }
+                    },
+                    { id: 'addNpc', icon: { ra: 'ra-player', material: 'person' } },
+                    {
+                        id: 'addTreasure',
+                        icon: { ra: 'ra-treasure-map', material: 'attach_money' }
+                    }
+                ]
+            },
+            { id: 'diagonalPath', icon: { material: 'call_split' } },
+            {
+                id: 'eraser',
+                icon: { ra: 'ra-eraser', material: 'auto_fix_high' },
+                class: 'yellow'
+            },
+            {
+                id: 'saveMap',
+                icon: { ra: 'ra-save', material: 'save' },
+                class: 'red'
+            },
+            {
+                id: 'loadMap',
+                icon: { ra: 'ra-folder', material: 'folder_open' },
+                class: 'red'
             }
-        } else {
-            cell.addEventListener('click', () => handleCellClick(cell, row, col));
-        }
-        
-        grid.appendChild(cell);
-        cells.set(cellId, cell);
-    }
-    return cell;
-}
+        ]
 
-// Updated updateVisibleCells function
-function updateVisibleCells() {
-    // Add buffer zones to prevent edge triggering
-    const buffer = 5; // Number of cells to buffer
-    const visibleStartCol = Math.max(0, Math.floor(-translateX / cellSize) - buffer);
-    const visibleStartRow = Math.max(0, Math.floor(-translateY / cellSize) - buffer);
-    const visibleEndCol = Math.min(gridSize, Math.ceil((-translateX + window.innerWidth / scale) / cellSize) + buffer);
-    const visibleEndRow = Math.min(gridSize, Math.ceil((-translateY + window.innerHeight / scale) / cellSize) + buffer);
+        let diagonalDirections = ['NE', 'SE', 'SW', 'NW']
+        let currentDiagonalIndex = 0
 
-    for (let row = visibleStartRow; row < visibleEndRow; row++) {
-        for (let col = visibleStartCol; col < visibleEndCol; col++) {
-            createCell(row, col);
+        const iconMap = {
+            door: { ra: 'ra-wooden-door', material: 'door_front' },
+            secretdoor: { ra: 'ra-secret-door', material: 'door_sliding' },
+            enemy: { ra: 'ra-dragon', material: 'pest_control' },
+            stairs: { ra: 'ra-tower', material: 'stairs' },
+            trap: { ra: 'ra-spikes-full', material: 'warning' },
+            npc: { ra: 'ra-player', material: 'person' },
+            treasure: { ra: 'ra-treasure-map', material: 'attach_money' }
         }
-    }
-}
+        const legendItems = [
+            { type: 'door', label: 'Door' },
+            { type: 'secretdoor', label: 'Secret Door' },
+            { type: 'enemy', label: 'Enemy' },
+            { type: 'stairs', label: 'Stairs' },
+            { type: 'trap', label: 'Trap' },
+            { type: 'npc', label: 'NPC' },
+            { type: 'treasure', label: 'Treasure' }
+        ]
+
+        function createGrid() {
+            grid.innerHTML = ''
+            grid.style.width = `${totalGridSize}px`
+            grid.style.height = `${totalGridSize}px`
+            mapData = Array(gridSize)
+                .fill()
+                .map(() => Array(gridSize).fill(null))
+
+            // Set initial view to top-left corner
+            translateX = 0
+            translateY = 0
+            scale = 1
+
+            updateGridTransform()
+        }
+
+        // Add this function to generate column labels
+        function getColumnLabel(col) {
+            const baseChar = Math.floor(col / 4)
+            const subIndex = col % 4
+            if (subIndex === 0) {
+                return String.fromCharCode(65 + baseChar) // A, B, C, ...
+            } else {
+                return `${String.fromCharCode(65 + baseChar)}${subIndex}`
+            }
+        }
+
+        // Update the updateVisibleCells function
+        // Helper function to create a cell
+        function createCell(row, col) {
+            const cellId = `${row}-${col}`
+            let cell = cells.get(cellId)
+
+            if (!cell) {
+                cell = document.createElement('div')
+                cell.classList.add('cell')
+                cell.style.left = `${col * cellSize}px`
+                cell.style.top = `${row * cellSize}px`
+
+                if (row === 0 || col === 0) {
+                    cell.classList.add('coordinate-label')
+                    if (row === 0 && col === 0) {
+                        cell.textContent = ''
+                    } else if (row === 0) {
+                        cell.textContent = getColumnLabel(col - 1)
+                    } else {
+                        cell.textContent = row
+                    }
+                } else {
+                    cell.addEventListener('click', () =>
+                        handleCellClick(cell, row, col)
+                    )
+                }
+
+                grid.appendChild(cell)
+                cells.set(cellId, cell)
+            }
+            return cell
+        }
+
+        // Updated updateVisibleCells function
+        function updateVisibleCells() {
+            // Add buffer zones to prevent edge triggering
+            const buffer = 5 // Number of cells to buffer
+            const visibleStartCol = Math.max(
+                0,
+                Math.floor(-translateX / cellSize) - buffer
+            )
+            const visibleStartRow = Math.max(
+                0,
+                Math.floor(-translateY / cellSize) - buffer
+            )
+            const visibleEndCol = Math.min(
+                gridSize,
+                Math.ceil((-translateX + window.innerWidth / scale) / cellSize) +
+                buffer
+            )
+            const visibleEndRow = Math.min(
+                gridSize,
+                Math.ceil((-translateY + window.innerHeight / scale) / cellSize) +
+                buffer
+            )
+
+            for (let row = visibleStartRow; row < visibleEndRow; row++) {
+                for (let col = visibleStartCol; col < visibleEndCol; col++) {
+                    createCell(row, col)
+                }
+            }
+        }
 
         function createCoordinateLabels() {
-        const rowLabels = document.getElementById('row-labels');
-        const colLabels = document.getElementById('col-labels');
-        
-        for (let i = 0; i < gridSize; i++) {
-            const rowLabel = document.createElement('div');
-            rowLabel.className = 'grid-label';
-            rowLabel.style.left = '0';
-            rowLabel.style.top = `${i * cellSize + 20}px`;
-            rowLabel.style.width = '20px';
-            rowLabel.style.height = `${cellSize}px`;
-            rowLabel.textContent = (i + 1).toString();
-            rowLabels.appendChild(rowLabel);
+            const rowLabels = document.getElementById('row-labels')
+            const colLabels = document.getElementById('col-labels')
 
-            const colLabel = document.createElement('div');
-            colLabel.className = 'grid-label';
-            colLabel.style.top = '0';
-            colLabel.style.left = `${i * cellSize + 20}px`;
-            colLabel.style.width = `${cellSize}px`;
-            colLabel.style.height = '20px';
-            colLabel.textContent = String.fromCharCode(65 + i); // A, B, C, ...
-            colLabels.appendChild(colLabel);
-        }
-    }
+            for (let i = 0; i < gridSize; i++) {
+                const rowLabel = document.createElement('div')
+                rowLabel.className = 'grid-label'
+                rowLabel.style.left = '0'
+                rowLabel.style.top = `${i * cellSize + 20}px`
+                rowLabel.style.width = '20px'
+                rowLabel.style.height = `${cellSize}px`
+                rowLabel.textContent = (i + 1).toString()
+                rowLabels.appendChild(rowLabel)
 
-    function updateCoordinateLabels() {
-        const rowLabels = document.getElementById('row-labels');
-        const colLabels = document.getElementById('col-labels');
-        
-        rowLabels.style.transform = `translateY(${translateY}px) scale(${scale})`;
-        colLabels.style.transform = `translateX(${translateX}px) scale(${scale})`;
-    }
-
-    function updateGridTransform() {
-    // Store current transform values
-    const oldTranslateX = translateX;
-    const oldTranslateY = translateY;
-    
-    // Apply transform
-    grid.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
-    
-    // Update visible cells
-    updateVisibleCells();
-    
-    // Check if transform values changed unexpectedly
-    if (translateX !== oldTranslateX || translateY !== oldTranslateY) {
-        console.log('Transform values changed unexpectedly, resetting');
-        translateX = oldTranslateX;
-        translateY = oldTranslateY;
-        grid.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
-    }
-}
-
-function screenToGridCoordinates(screenX, screenY) {
-    const rect = gridContainer.getBoundingClientRect();
-    const gridX = (screenX - rect.left - 20) / scale - translateX;
-    const gridY = (screenY - rect.top - 20) / scale - translateY;
-    
-    const col = Math.floor(gridX / cellSize);
-    const row = Math.floor(gridY / cellSize);
-    
-    return { row, col };
-}
-
-function updateDiagonalModeIndicator() {
-    const diagonalPathButton = document.getElementById('diagonalPath');
-    if (diagonalPathButton) {
-        diagonalPathButton.style.backgroundColor = isDiagonalModeActive ? '#4CAF50' : '#1E88E5';
-    }
-    
-    document.querySelectorAll('#diagonalPathSubmenu .fab-item').forEach(item => {
-        const isActive = isDiagonalModeActive && item.id.toLowerCase() === activeDiagonalDirection.toLowerCase();
-        item.style.backgroundColor = isActive ? '#4CAF50' : '#1E88E5';
-    });
-}
-
-// Update the handleCellClick function
-function handleCellClick(cell, row, col) {
-    const oldTranslateX = translateX;
-    const oldTranslateY = translateY;
-    
-    console.log('Cell clicked:', { row, col, currentMode, isDiagonalModeActive });
-    
-    if (row === 0 || col === 0) return;
-
-    if (isDiagonalModeActive && activeDiagonalDirection) {
-        toggleDiagonalPath(cell, row, col, activeDiagonalDirection);
-    } else {
-        const normalizedMode = currentMode.replace(/^(add|mark)/, '').toLowerCase();
-        console.log('Normalized mode:', normalizedMode);
-        
-        switch (normalizedMode) {
-            case 'fill':
-                toggleFill(cell, row, col);
-                break;
-            case 'eraser':
-                eraseCell(cell, row, col);
-                break;
-            case 'door':
-            case 'secretdoor':
-            case 'enemy':
-            case 'stairs':
-            case 'trap':
-            case 'npc':
-            case 'treasure':
-                // Allow icon placement even on diagonal cells
-                if (cell.classList.contains('filled') || 
-                    cell.classList.contains('diagonal-ne') || 
-                    cell.classList.contains('diagonal-se') || 
-                    cell.classList.contains('diagonal-sw') || 
-                    cell.classList.contains('diagonal-nw')) {
-                    addMapElement(cell, row, col, normalizedMode);
-                    console.log('Adding element with mode:', normalizedMode);
-                }
-                break;
-            default:
-                console.log('Unhandled mode:', normalizedMode);
-                break;
-        }
-    }
-    
-    if (translateX !== oldTranslateX || translateY !== oldTranslateY) {
-        console.log('Correcting post-click transform change');
-        translateX = oldTranslateX;
-        translateY = oldTranslateY;
-        updateGridTransform();
-    }
-}
-
-function eraseCell(cell, row, col) {
-    // Remove any icons from the cell
-    cell.innerHTML = '';
-    
-    // Remove all classes except 'cell' and 'filled'
-    cell.className = 'cell filled';
-    
-    // Update mapData
-    mapData[row][col] = 'filled';
-    
-    // Update cell appearance
-    updateBorders(cell, row, col);
-}
-
-function updateCellAppearance(cell, row, col) {
-    // This function remains the same
-    if (mapData[row] && mapData[row][col] === 'filled') {
-        cell.classList.add('filled');
-    } else {
-        cell.classList.remove('filled');
-    }
-    updateBorders(cell, row, col);
-}
-
-function toggleFill(cell, row, col) {
-    console.log('Toggling fill for cell:', { row, col });
-    
-    // Toggle the filled class
-    cell.classList.toggle('filled');
-    const isFilled = cell.classList.contains('filled');
-    
-    if (isFilled) {
-        mapData[row][col] = 'filled';
-    } else {
-        mapData[row][col] = null;
-        cell.innerHTML = ''; // Clear any existing content when unfilling
-    }
-    
-    // Update borders for this cell
-    updateBorders(cell, row, col);
-    
-    // Update borders for all neighboring cells
-    if (col > 0) updateBorders(getCell(row, col - 1), row, col - 1);
-    if (col < gridSize - 1) updateBorders(getCell(row, col + 1), row, col + 1);
-    if (row > 0) updateBorders(getCell(row - 1, col), row - 1, col);
-    if (row < gridSize - 1) updateBorders(getCell(row + 1, col), row + 1, col);
-
-    console.log('Finished toggling fill. Cell state:', {
-        isFilled,
-        classList: cell.className
-    });
-}
-
-
-
-function toggleDiagonalPath(cell, row, col, direction) {
-    console.log('Toggling diagonal path:', { row, col, direction });
-    
-    // Convert direction (e.g., "diagonalPathSE") to class name (e.g., "diagonal-se")
-    const directionSuffix = direction.replace('diagonalPath', '').toLowerCase();
-    const diagonalClass = `diagonal-${directionSuffix}`;
-    
-    console.log('Using diagonal class:', diagonalClass);
-
-    if (cell.classList.contains(diagonalClass)) {
-        // Remove diagonal path completely
-        console.log('Removing diagonal path');
-        cell.classList.remove('diagonal-ne', 'diagonal-se', 'diagonal-sw', 'diagonal-nw', 'filled');
-        cell.classList.remove('connected-left', 'connected-right', 'connected-top', 'connected-bottom');
-        cell.style.background = ''; // Reset the background
-        mapData[row][col] = null;
-        
-        // Remove any icons
-        const existingIcon = cell.querySelector('i');
-        if (existingIcon) {
-            existingIcon.remove();
-        }
-    } else {
-        // Preserve any existing icon
-        const existingIcon = cell.querySelector('i');
-        const iconHtml = existingIcon ? existingIcon.outerHTML : '';
-        
-        // Clear existing content and classes
-        cell.innerHTML = '';
-        cell.className = 'cell';
-        
-        // Add diagonal path
-        cell.classList.add(diagonalClass);
-        // Don't override the gradient background
-        cell.style.background = ''; // Remove any inline background style
-        mapData[row][col] = direction;
-        
-        // Restore icon if it existed
-        if (iconHtml) {
-            cell.insertAdjacentHTML('beforeend', iconHtml);
-        }
-    }
-
-    // Log the final state of the cell
-    console.log('Final cell state:', {
-        classList: cell.className,
-        backgroundStyle: cell.style.background,
-        mapData: mapData[row][col]
-    });
-
-    // Update borders for this cell and neighbors
-    updateBorders(cell, row, col);
-    if (col > 0) updateBorders(getCell(row, col - 1), row, col - 1);
-    if (col < gridSize - 1) updateBorders(getCell(row, col + 1), row, col + 1);
-    if (row > 0) updateBorders(getCell(row - 1, col), row - 1, col);
-    if (row < gridSize - 1) updateBorders(getCell(row + 1, col), row + 1, col);
-}
-
-// Updated updateBorders function for diagonal handling
-function updateBorders(cell, row, col) {
-    if (!cell) return;
-    
-    const directions = [
-        { name: 'left', condition: col > 0, neighbor: getCell(row, col - 1) },
-        { name: 'right', condition: col < gridSize - 1, neighbor: getCell(row, col + 1) },
-        { name: 'top', condition: row > 0, neighbor: getCell(row - 1, col) },
-        { name: 'bottom', condition: row < gridSize - 1, neighbor: getCell(row + 1, col) }
-    ];
-
-    // Check if this cell is diagonal
-    const isDiagonal = cell.classList.contains('diagonal-ne') || 
-                      cell.classList.contains('diagonal-se') || 
-                      cell.classList.contains('diagonal-sw') || 
-                      cell.classList.contains('diagonal-nw');
-
-    // Remove all border-related classes if it's a diagonal cell
-    if (isDiagonal) {
-        cell.classList.remove('left', 'right', 'top', 'bottom');
-        directions.forEach(dir => {
-            if (dir.condition && dir.neighbor) {
-                const isNeighborFilled = dir.neighbor.classList.contains('filled') || 
-                                       dir.neighbor.classList.contains('diagonal-ne') || 
-                                       dir.neighbor.classList.contains('diagonal-se') || 
-                                       dir.neighbor.classList.contains('diagonal-sw') || 
-                                       dir.neighbor.classList.contains('diagonal-nw');
-                
-                if (isNeighborFilled) {
-                    dir.neighbor.classList.add(`connected-${getOppositeDirection(dir.name)}`);
-                }
+                const colLabel = document.createElement('div')
+                colLabel.className = 'grid-label'
+                colLabel.style.top = '0'
+                colLabel.style.left = `${i * cellSize + 20}px`
+                colLabel.style.width = `${cellSize}px`
+                colLabel.style.height = '20px'
+                colLabel.textContent = String.fromCharCode(65 + i) // A, B, C, ...
+                colLabels.appendChild(colLabel)
             }
-        });
-        return;
-    }
+        }
 
-    // Handle regular cell borders
-    directions.forEach(dir => {
-        if (dir.condition && dir.neighbor) {
-            const isNeighborFilled = dir.neighbor.classList.contains('filled') || 
-                                   dir.neighbor.classList.contains('diagonal-ne') || 
-                                   dir.neighbor.classList.contains('diagonal-se') || 
-                                   dir.neighbor.classList.contains('diagonal-sw') || 
-                                   dir.neighbor.classList.contains('diagonal-nw');
+        function updateCoordinateLabels() {
+            const rowLabels = document.getElementById('row-labels')
+            const colLabels = document.getElementById('col-labels')
 
-            if (cell.classList.contains('filled') && isNeighborFilled) {
-                cell.classList.add(`connected-${dir.name}`);
-                dir.neighbor.classList.add(`connected-${getOppositeDirection(dir.name)}`);
+            rowLabels.style.transform = `translateY(${translateY}px) scale(${scale})`
+            colLabels.style.transform = `translateX(${translateX}px) scale(${scale})`
+        }
+
+        function updateGridTransform() {
+            // Store current transform values
+            const oldTranslateX = translateX
+            const oldTranslateY = translateY
+
+            // Apply transform
+            grid.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`
+
+            // Update visible cells
+            updateVisibleCells()
+
+            // Check if transform values changed unexpectedly
+            if (translateX !== oldTranslateX || translateY !== oldTranslateY) {
+                console.log('Transform values changed unexpectedly, resetting')
+                translateX = oldTranslateX
+                translateY = oldTranslateY
+                grid.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`
+            }
+        }
+
+        function screenToGridCoordinates(screenX, screenY) {
+            const rect = gridContainer.getBoundingClientRect()
+            const gridX = (screenX - rect.left - 20) / scale - translateX
+            const gridY = (screenY - rect.top - 20) / scale - translateY
+
+            const col = Math.floor(gridX / cellSize)
+            const row = Math.floor(gridY / cellSize)
+
+            return { row, col }
+        }
+
+        function updateDiagonalModeIndicator() {
+            const diagonalPathButton = document.getElementById('diagonalPath')
+            if (diagonalPathButton) {
+                diagonalPathButton.style.backgroundColor = isDiagonalModeActive
+                    ? '#4CAF50'
+                    : '#1E88E5'
+            }
+
+            document
+                .querySelectorAll('#diagonalPathSubmenu .fab-item')
+                .forEach(item => {
+                    const isActive =
+                        isDiagonalModeActive &&
+                        item.id.toLowerCase() === activeDiagonalDirection.toLowerCase()
+                    item.style.backgroundColor = isActive ? '#4CAF50' : '#1E88E5'
+                })
+        }
+
+        // Update the handleCellClick function
+        function handleCellClick(cell, row, col) {
+            const oldTranslateX = translateX
+            const oldTranslateY = translateY
+
+            console.log('Cell clicked:', {
+                row,
+                col,
+                currentMode,
+                isDiagonalModeActive
+            })
+
+            if (row === 0 || col === 0) return
+
+            if (isDiagonalModeActive && activeDiagonalDirection) {
+                toggleDiagonalPath(cell, row, col, activeDiagonalDirection)
             } else {
-                cell.classList.remove(dir.name, `connected-${dir.name}`);
-                dir.neighbor.classList.remove(
-                    getOppositeDirection(dir.name),
-                    `connected-${getOppositeDirection(dir.name)}`
-                );
+                const normalizedMode = currentMode
+                    .replace(/^(add|mark)/, '')
+                    .toLowerCase()
+                console.log('Normalized mode:', normalizedMode)
+
+                switch (normalizedMode) {
+                    case 'fill':
+                        toggleFill(cell, row, col)
+                        break
+                    case 'eraser':
+                        eraseCell(cell, row, col)
+                        break
+                    case 'door':
+                    case 'secretdoor':
+                    case 'enemy':
+                    case 'stairs':
+                    case 'trap':
+                    case 'npc':
+                    case 'treasure':
+                        // Allow icon placement even on diagonal cells
+                        if (
+                            cell.classList.contains('filled') ||
+                            cell.classList.contains('diagonal-ne') ||
+                            cell.classList.contains('diagonal-se') ||
+                            cell.classList.contains('diagonal-sw') ||
+                            cell.classList.contains('diagonal-nw')
+                        ) {
+                            addMapElement(cell, row, col, normalizedMode)
+                            console.log('Adding element with mode:', normalizedMode)
+                        }
+                        break
+                    default:
+                        console.log('Unhandled mode:', normalizedMode)
+                        break
+                }
+            }
+
+            if (translateX !== oldTranslateX || translateY !== oldTranslateY) {
+                console.log('Correcting post-click transform change')
+                translateX = oldTranslateX
+                translateY = oldTranslateY
+                updateGridTransform()
             }
         }
-    });
-}
 
-function getCell(row, col) {
-    const cell = cells.get(`${row}-${col}`);
-    if (!cell) {
-        console.log('No cell found at:', { row, col });
-    }
-    return cell;
-}
+        function eraseCell(cell, row, col) {
+            // Remove any icons from the cell
+            cell.innerHTML = ''
 
-function getOppositeDirection(direction) {
-    const opposites = {
-        'left': 'right',
-        'right': 'left',
-        'top': 'bottom',
-        'bottom': 'top'
-    };
-    return opposites[direction];
-}
+            // Remove all classes except 'cell' and 'filled'
+            cell.className = 'cell filled'
+
+            // Update mapData
+            mapData[row][col] = 'filled'
+
+            // Update cell appearance
+            updateBorders(cell, row, col)
+        }
+
+        function updateCellAppearance(cell, row, col) {
+            // This function remains the same
+            if (mapData[row] && mapData[row][col] === 'filled') {
+                cell.classList.add('filled')
+            } else {
+                cell.classList.remove('filled')
+            }
+            updateBorders(cell, row, col)
+        }
+
+        function toggleFill(cell, row, col) {
+            console.log('Toggling fill for cell:', { row, col })
+
+            // Toggle the filled class
+            cell.classList.toggle('filled')
+            const isFilled = cell.classList.contains('filled')
+
+            if (isFilled) {
+                mapData[row][col] = 'filled'
+            } else {
+                mapData[row][col] = null
+                cell.innerHTML = '' // Clear any existing content when unfilling
+            }
+
+            // Update borders for this cell
+            updateBorders(cell, row, col)
+
+            // Update borders for all neighboring cells
+            if (col > 0) updateBorders(getCell(row, col - 1), row, col - 1)
+            if (col < gridSize - 1)
+                updateBorders(getCell(row, col + 1), row, col + 1)
+            if (row > 0) updateBorders(getCell(row - 1, col), row - 1, col)
+            if (row < gridSize - 1)
+                updateBorders(getCell(row + 1, col), row + 1, col)
+
+            console.log('Finished toggling fill. Cell state:', {
+                isFilled,
+                classList: cell.className
+            })
+        }
+
+        function toggleDiagonalPath(cell, row, col, direction) {
+            console.log('Toggling diagonal path:', { row, col, direction })
+
+            // Convert direction (e.g., "diagonalPathSE") to class name (e.g., "diagonal-se")
+            const directionSuffix = direction
+                .replace('diagonalPath', '')
+                .toLowerCase()
+            const diagonalClass = `diagonal-${directionSuffix}`
+
+            console.log('Using diagonal class:', diagonalClass)
+
+            if (cell.classList.contains(diagonalClass)) {
+                // Remove diagonal path completely
+                console.log('Removing diagonal path')
+                cell.classList.remove(
+                    'diagonal-ne',
+                    'diagonal-se',
+                    'diagonal-sw',
+                    'diagonal-nw',
+                    'filled'
+                )
+                cell.classList.remove(
+                    'connected-left',
+                    'connected-right',
+                    'connected-top',
+                    'connected-bottom'
+                )
+                cell.style.background = '' // Reset the background
+                mapData[row][col] = null
+
+                // Remove any icons
+                const existingIcon = cell.querySelector('i')
+                if (existingIcon) {
+                    existingIcon.remove()
+                }
+            } else {
+                // Preserve any existing icon
+                const existingIcon = cell.querySelector('i')
+                const iconHtml = existingIcon ? existingIcon.outerHTML : ''
+
+                // Clear existing content and classes
+                cell.innerHTML = ''
+                cell.className = 'cell'
+
+                // Add diagonal path
+                cell.classList.add(diagonalClass)
+                // Don't override the gradient background
+                cell.style.background = '' // Remove any inline background style
+                mapData[row][col] = direction
+
+                // Restore icon if it existed
+                if (iconHtml) {
+                    cell.insertAdjacentHTML('beforeend', iconHtml)
+                }
+            }
+
+            // Log the final state of the cell
+            console.log('Final cell state:', {
+                classList: cell.className,
+                backgroundStyle: cell.style.background,
+                mapData: mapData[row][col]
+            })
+
+            // Update borders for this cell and neighbors
+            updateBorders(cell, row, col)
+            if (col > 0) updateBorders(getCell(row, col - 1), row, col - 1)
+            if (col < gridSize - 1)
+                updateBorders(getCell(row, col + 1), row, col + 1)
+            if (row > 0) updateBorders(getCell(row - 1, col), row - 1, col)
+            if (row < gridSize - 1)
+                updateBorders(getCell(row + 1, col), row + 1, col)
+        }
+
+        // Updated updateBorders function for diagonal handling
+        function updateBorders(cell, row, col) {
+            if (!cell) return
+
+            const directions = [
+                { name: 'left', condition: col > 0, neighbor: getCell(row, col - 1) },
+                {
+                    name: 'right',
+                    condition: col < gridSize - 1,
+                    neighbor: getCell(row, col + 1)
+                },
+                { name: 'top', condition: row > 0, neighbor: getCell(row - 1, col) },
+                {
+                    name: 'bottom',
+                    condition: row < gridSize - 1,
+                    neighbor: getCell(row + 1, col)
+                }
+            ]
+
+            // Check if this cell is diagonal
+            const isDiagonal =
+                cell.classList.contains('diagonal-ne') ||
+                cell.classList.contains('diagonal-se') ||
+                cell.classList.contains('diagonal-sw') ||
+                cell.classList.contains('diagonal-nw')
+
+            // Remove all border-related classes if it's a diagonal cell
+            if (isDiagonal) {
+                cell.classList.remove('left', 'right', 'top', 'bottom')
+                directions.forEach(dir => {
+                    if (dir.condition && dir.neighbor) {
+                        const isNeighborFilled =
+                            dir.neighbor.classList.contains('filled') ||
+                            dir.neighbor.classList.contains('diagonal-ne') ||
+                            dir.neighbor.classList.contains('diagonal-se') ||
+                            dir.neighbor.classList.contains('diagonal-sw') ||
+                            dir.neighbor.classList.contains('diagonal-nw')
+
+                        if (isNeighborFilled) {
+                            dir.neighbor.classList.add(
+                                `connected-${getOppositeDirection(dir.name)}`
+                            )
+                        }
+                    }
+                })
+                return
+            }
+
+            // Handle regular cell borders
+            directions.forEach(dir => {
+                if (dir.condition && dir.neighbor) {
+                    const isNeighborFilled =
+                        dir.neighbor.classList.contains('filled') ||
+                        dir.neighbor.classList.contains('diagonal-ne') ||
+                        dir.neighbor.classList.contains('diagonal-se') ||
+                        dir.neighbor.classList.contains('diagonal-sw') ||
+                        dir.neighbor.classList.contains('diagonal-nw')
+
+                    if (cell.classList.contains('filled') && isNeighborFilled) {
+                        cell.classList.add(`connected-${dir.name}`)
+                        dir.neighbor.classList.add(
+                            `connected-${getOppositeDirection(dir.name)}`
+                        )
+                    } else {
+                        cell.classList.remove(dir.name, `connected-${dir.name}`)
+                        dir.neighbor.classList.remove(
+                            getOppositeDirection(dir.name),
+                            `connected-${getOppositeDirection(dir.name)}`
+                        )
+                    }
+                }
+            })
+        }
+
+        function getCell(row, col) {
+            const cell = cells.get(`${row}-${col}`)
+            if (!cell) {
+                console.log('No cell found at:', { row, col })
+            }
+            return cell
+        }
+
+        function getOppositeDirection(direction) {
+            const opposites = {
+                left: 'right',
+                right: 'left',
+                top: 'bottom',
+                bottom: 'top'
+            }
+            return opposites[direction]
+        }
 
         // Icon Functions
         function checkIconAvailability(iconClass) {
-            return new Promise((resolve) => {
-                const tempIcon = document.createElement('i');
-                tempIcon.className = `ra ${iconClass}`;
-                tempIcon.style.position = 'absolute';
-                tempIcon.style.visibility = 'hidden';
-                document.body.appendChild(tempIcon);
+            return new Promise(resolve => {
+                const tempIcon = document.createElement('i')
+                tempIcon.className = `ra ${iconClass}`
+                tempIcon.style.position = 'absolute'
+                tempIcon.style.visibility = 'hidden'
+                document.body.appendChild(tempIcon)
 
                 setTimeout(() => {
-                    const isAvailable = tempIcon.offsetWidth > 0 && tempIcon.offsetHeight > 0;
-                    document.body.removeChild(tempIcon);
-                    resolve(isAvailable);
-                }, 50);
-            });
+                    const isAvailable =
+                        tempIcon.offsetWidth > 0 && tempIcon.offsetHeight > 0
+                    document.body.removeChild(tempIcon)
+                    resolve(isAvailable)
+                }, 50)
+            })
         }
 
         async function createIcon(iconObj) {
-    if (iconObj.ra) {
-        const isRpgIconAvailable = await checkIconAvailability(iconObj.ra);
-        const icon = document.createElement('i');
-        
-        if (isRpgIconAvailable) {
-            icon.className = `ra ${iconObj.ra}`;
-        } else {
-            icon.className = 'material-icons';
-            icon.textContent = iconObj.material;
-        }
-        
-        return icon;
-    } else if (iconObj.material) {
-        const icon = document.createElement('i');
-        icon.className = 'material-icons';
-        icon.textContent = iconObj.material;
-        return icon;
-    }
-    
-    return null;
-}
+            if (iconObj.ra) {
+                const isRpgIconAvailable = await checkIconAvailability(iconObj.ra)
+                const icon = document.createElement('i')
 
-function getIconClass(mode) {
-    console.log('Getting icon class for mode:', mode);
-    const iconInfo = iconMap[mode] || { ra: '', material: '' };
-    console.log('Found icon info:', iconInfo);
-    return iconInfo;
-}
+                if (isRpgIconAvailable) {
+                    icon.className = `ra ${iconObj.ra}`
+                } else {
+                    icon.className = 'material-icons'
+                    icon.textContent = iconObj.material
+                }
 
-function getActualZIndex(element) {
-    return window.getComputedStyle(element).zIndex;
-}
+                return icon
+            } else if (iconObj.material) {
+                const icon = document.createElement('i')
+                icon.className = 'material-icons'
+                icon.textContent = iconObj.material
+                return icon
+            }
 
-async function addMapElement(cell, row, col, mode) {
-    console.log('addMapElement called with:', { mode, row, col });
-    if (cell.classList.contains('filled')) {
-        console.log('Cell is filled, proceeding with icon placement');
-        
-        // Remove any existing icons
-        const existingIcon = cell.querySelector('i');
-        if (existingIcon) {
-            existingIcon.remove();
-            console.log('Removed existing icon');
+            return null
         }
 
-        const icons = getIconClass(mode);
-        console.log('Icon class for mode:', icons);
-        const isRpgIconAvailable = await checkIconAvailability(icons.ra);
-        console.log('RPG icon available:', isRpgIconAvailable);
-
-        const iconElement = document.createElement('i');
-        iconElement.style.zIndex = '10';
-        
-        // Check if this is a diagonal cell
-        const isDiagonal = cell.classList.contains('diagonal-ne') || 
-                          cell.classList.contains('diagonal-se') || 
-                          cell.classList.contains('diagonal-sw') || 
-                          cell.classList.contains('diagonal-nw');
-
-        if (isRpgIconAvailable) {
-            iconElement.className = `ra ${icons.ra}`;
-            console.log('Using RPG icon:', icons.ra);
-        } else {
-            iconElement.className = 'material-icons';
-            iconElement.textContent = icons.material;
-            console.log('Using material icon:', icons.material);
+        function getIconClass(mode) {
+            console.log('Getting icon class for mode:', mode)
+            const iconInfo = iconMap[mode] || { ra: '', material: '' }
+            console.log('Found icon info:', iconInfo)
+            return iconInfo
         }
 
-        console.log('Created icon element:', iconElement);
-
-        if (mode === 'secretdoor' || mode === 'trap') {
-            cell.classList.add('secret-element');
-            const secretContainer = document.createElement('div');
-            secretContainer.className = 'secret-container';
-            secretContainer.appendChild(iconElement);
-            cell.appendChild(secretContainer);
-            console.log('Added as secret element');
-        } else {
-            cell.appendChild(iconElement);
-            console.log('Added as regular element');
+        function getActualZIndex(element) {
+            return window.getComputedStyle(element).zIndex
         }
 
-        console.log('Icon added to cell. Cell contents:', cell.innerHTML);
-        mapData[row][col] = mode;
-        updateBorders(cell, row, col);
-    }
-}
+        async function addMapElement(cell, row, col, mode) {
+            console.log('addMapElement called with:', { mode, row, col })
+            if (cell.classList.contains('filled')) {
+                console.log('Cell is filled, proceeding with icon placement')
+
+                // Remove any existing icons
+                const existingIcon = cell.querySelector('i')
+                if (existingIcon) {
+                    existingIcon.remove()
+                    console.log('Removed existing icon')
+                }
+
+                const icons = getIconClass(mode)
+                console.log('Icon class for mode:', icons)
+                const isRpgIconAvailable = await checkIconAvailability(icons.ra)
+                console.log('RPG icon available:', isRpgIconAvailable)
+
+                const iconElement = document.createElement('i')
+                iconElement.style.zIndex = '10'
+
+                // Check if this is a diagonal cell
+                const isDiagonal =
+                    cell.classList.contains('diagonal-ne') ||
+                    cell.classList.contains('diagonal-se') ||
+                    cell.classList.contains('diagonal-sw') ||
+                    cell.classList.contains('diagonal-nw')
+
+                if (isRpgIconAvailable) {
+                    iconElement.className = `ra ${icons.ra}`
+                    console.log('Using RPG icon:', icons.ra)
+                } else {
+                    iconElement.className = 'material-icons'
+                    iconElement.textContent = icons.material
+                    console.log('Using material icon:', icons.material)
+                }
+
+                console.log('Created icon element:', iconElement)
+
+                if (mode === 'secretdoor' || mode === 'trap') {
+                    cell.classList.add('secret-element')
+                    const secretContainer = document.createElement('div')
+                    secretContainer.className = 'secret-container'
+                    secretContainer.appendChild(iconElement)
+                    cell.appendChild(secretContainer)
+                    console.log('Added as secret element')
+                } else {
+                    cell.appendChild(iconElement)
+                    console.log('Added as regular element')
+                }
+
+                console.log('Icon added to cell. Cell contents:', cell.innerHTML)
+                mapData[row][col] = mode
+                updateBorders(cell, row, col)
+            }
+        }
 
         // FAB Menu Functions
         async function createFabMenu() {
-    for (const item of menuItems) {
-        const fabItem = document.createElement('div');
-        fabItem.id = item.id;
-        console.log('Creating menu item:', item.id);
-        fabItem.className = `fab-item ${item.class || ''}`;
-        
-        const icon = await createIcon(item.icon);
-        if (icon) {
-            fabItem.appendChild(icon);
-        }
-        
-        fabMenu.appendChild(fabItem);
+            for (const item of menuItems) {
+                const fabItem = document.createElement('div')
+                fabItem.id = item.id
+                console.log('Creating menu item:', item.id)
+                fabItem.className = `fab-item ${item.class || ''}`
 
-        if (item.submenu) {
-            const submenu = document.createElement('div');
-            submenu.className = 'fab-submenu';
-            submenu.id = `${item.id}Submenu`;
-            console.log('Creating submenu:', submenu.id);
-            
-            for (const subItem of item.submenu) {
-                const subFabItem = document.createElement('div');
-                subFabItem.id = subItem.id;
-                console.log('Creating submenu item:', subItem.id);
-                subFabItem.className = 'fab-item';
-                
-                const subIcon = await createIcon(subItem.icon);
-                if (subIcon) {
-                    subFabItem.appendChild(subIcon);
+                const icon = await createIcon(item.icon)
+                if (icon) {
+                    fabItem.appendChild(icon)
                 }
-                
-                submenu.appendChild(subFabItem);
+
+                fabMenu.appendChild(fabItem)
+
+                if (item.submenu) {
+                    const submenu = document.createElement('div')
+                    submenu.className = 'fab-submenu'
+                    submenu.id = `${item.id}Submenu`
+                    console.log('Creating submenu:', submenu.id)
+
+                    for (const subItem of item.submenu) {
+                        const subFabItem = document.createElement('div')
+                        subFabItem.id = subItem.id
+                        console.log('Creating submenu item:', subItem.id)
+                        subFabItem.className = 'fab-item'
+
+                        const subIcon = await createIcon(subItem.icon)
+                        if (subIcon) {
+                            subFabItem.appendChild(subIcon)
+                        }
+
+                        submenu.appendChild(subFabItem)
+                    }
+
+                    fabMenu.appendChild(submenu)
+                }
             }
-            
-            fabMenu.appendChild(submenu);
         }
-    }
-}
 
+        function createDiagonalRotateFab() {
+            // Remove any existing diagonal FAB first
+            const existingFab = document.getElementById('diagonalRotateFab')
+            if (existingFab) {
+                existingFab.remove()
+            }
 
+            const rotateFab = document.createElement('div')
+            rotateFab.className = 'diagonal-rotate-fab'
+            rotateFab.id = 'diagonalRotateFab'
 
-function createDiagonalRotateFab() {
-    // Remove any existing diagonal FAB first
-    const existingFab = document.getElementById('diagonalRotateFab');
-    if (existingFab) {
-        existingFab.remove();
-    }
+            const icon = document.createElement('i')
+            icon.className = 'material-icons'
+            icon.textContent = 'north_east' // Initial direction
 
-    const rotateFab = document.createElement('div');
-    rotateFab.className = 'diagonal-rotate-fab';
-    rotateFab.id = 'diagonalRotateFab';
-    
-    const icon = document.createElement('i');
-    icon.className = 'material-icons';
-    icon.textContent = 'north_east'; // Initial direction
-    
-    rotateFab.appendChild(icon);
-    document.body.appendChild(rotateFab);
+            rotateFab.appendChild(icon)
+            document.body.appendChild(rotateFab)
 
-    // Add these styles if not already in your CSS
-    rotateFab.style.position = 'fixed';
-    rotateFab.style.bottom = '20px';
-    rotateFab.style.right = '90px';
-    rotateFab.style.width = '40px';
-    rotateFab.style.height = '40px';
-    rotateFab.style.borderRadius = '50%';
-    rotateFab.style.backgroundColor = '#1E88E5';
-    rotateFab.style.color = 'white';
-    rotateFab.style.display = 'none';
-    rotateFab.style.justifyContent = 'center';
-    rotateFab.style.alignItems = 'center';
-    rotateFab.style.cursor = 'pointer';
-    rotateFab.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
-    rotateFab.style.zIndex = '1000';
+            // Add these styles if not already in your CSS
+            rotateFab.style.position = 'fixed'
+            rotateFab.style.bottom = '20px'
+            rotateFab.style.right = '90px'
+            rotateFab.style.width = '40px'
+            rotateFab.style.height = '40px'
+            rotateFab.style.borderRadius = '50%'
+            rotateFab.style.backgroundColor = '#1E88E5'
+            rotateFab.style.color = 'white'
+            rotateFab.style.display = 'none'
+            rotateFab.style.justifyContent = 'center'
+            rotateFab.style.alignItems = 'center'
+            rotateFab.style.cursor = 'pointer'
+            rotateFab.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)'
+            rotateFab.style.zIndex = '1000'
 
-    icon.style.fontSize = '20px';
-    
-    return rotateFab;
-}
+            icon.style.fontSize = '20px'
 
-// Add function to cycle through diagonal directions
-function cycleDiagonalDirection() {
-    currentDiagonalIndex = (currentDiagonalIndex + 1) % diagonalDirections.length;
-    const direction = diagonalDirections[currentDiagonalIndex];
-    activeDiagonalDirection = `diagonalPath${direction}`;
-    
-    // Update the icon based on direction
-    const icon = document.querySelector('#diagonalRotateFab i');
-    switch(direction) {
-        case 'NE':
-            icon.textContent = 'north_east';
-            break;
-        case 'SE':
-            icon.textContent = 'south_east';
-            break;
-        case 'SW':
-            icon.textContent = 'south_west';
-            break;
-        case 'NW':
-            icon.textContent = 'north_west';
-            break;
-    }
-    
-    console.log('Diagonal direction changed to:', activeDiagonalDirection);
-}
+            return rotateFab
+        }
+
+        // Add function to cycle through diagonal directions
+        function cycleDiagonalDirection() {
+            currentDiagonalIndex =
+                (currentDiagonalIndex + 1) % diagonalDirections.length
+            const direction = diagonalDirections[currentDiagonalIndex]
+            activeDiagonalDirection = `diagonalPath${direction}`
+
+            // Update the icon based on direction
+            const icon = document.querySelector('#diagonalRotateFab i')
+            switch (direction) {
+                case 'NE':
+                    icon.textContent = 'north_east'
+                    break
+                case 'SE':
+                    icon.textContent = 'south_east'
+                    break
+                case 'SW':
+                    icon.textContent = 'south_west'
+                    break
+                case 'NW':
+                    icon.textContent = 'north_west'
+                    break
+            }
+
+            console.log('Diagonal direction changed to:', activeDiagonalDirection)
+        }
 
         async function createLegend() {
-    const legendContent = document.getElementById('legendContent');
-    legendContent.innerHTML = ''; // Clear existing content
+            const legendContent = document.getElementById('legendContent')
+            legendContent.innerHTML = '' // Clear existing content
 
-    for (const item of legendItems) {
-        const icons = getIconClass(item.type);
-        const isRpgIconAvailable = await checkIconAvailability(icons.ra);
-        
-        const legendItem = document.createElement('div');
-        legendItem.className = 'legend-item';
-        
-        const iconElement = document.createElement('div');
-        iconElement.className = 'legend-icon';
-        if (isRpgIconAvailable) {
-            iconElement.innerHTML = `<i class="ra ${icons.ra}"></i>`;
-        } else {
-            iconElement.innerHTML = `<i class="material-icons">${icons.material}</i>`;
-        }
-        
-        const textElement = document.createElement('div');
-        textElement.className = 'legend-text';
-        textElement.textContent = item.label;
-        
-        legendItem.appendChild(iconElement);
-        legendItem.appendChild(textElement);
-        legendContent.appendChild(legendItem);
-    }
-}
+            for (const item of legendItems) {
+                const icons = getIconClass(item.type)
+                const isRpgIconAvailable = await checkIconAvailability(icons.ra)
 
-function setupLegend() {
-    const legendItems = [
-        { type: 'door', label: 'Door' },
-        { type: 'secretdoor', label: 'Secret Door' },
-        { type: 'enemy', label: 'Enemy' },
-        { type: 'stairs', label: 'Stairs' },
-        { type: 'trap', label: 'Trap' },
-        { type: 'npc', label: 'NPC' },
-        { type: 'treasure', label: 'Treasure' }
-    ];
+                const legendItem = document.createElement('div')
+                legendItem.className = 'legend-item'
 
-    // Create a button to toggle the legend
-    const toggleButton = document.createElement('button');
-    toggleButton.id = 'toggleLegend';
-    toggleButton.innerHTML = '?';
-    document.body.appendChild(toggleButton);
-
-    const legend = document.getElementById('legend');
-    toggleButton.addEventListener('click', () => {
-        legend.style.display = legend.style.display === 'none' ? 'block' : 'none';
-    });
-
-    // Initial creation of the legend
-    createLegend();
-}
-
-function setupEventListeners() {
-    const fabMenuItems = document.querySelectorAll('.fab-item');
-    
-    // Ensure diagonal FAB exists
-    let diagonalRotateFab = document.getElementById('diagonalRotateFab');
-    if (!diagonalRotateFab) {
-        diagonalRotateFab = createDiagonalRotateFab();
-    }
-    
-    // Main FAB button click
-    fabBtn.addEventListener('click', () => {
-        console.log('FAB button clicked');
-        fabMenu.style.display = fabMenu.style.display === 'none' ? 'flex' : 'none';
-    });
-
-    // Map Elements submenu handlers
-    document.querySelectorAll('#mapElementsSubmenu .fab-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.stopPropagation();
-            console.log('Map element submenu item clicked:', e.currentTarget.id);
-            const newMode = e.currentTarget.id.replace(/^(add|mark)/, '').toLowerCase();
-            console.log('Setting currentMode to:', newMode);
-            currentMode = newMode;
-            
-            // Hide submenus
-            document.querySelectorAll('.fab-submenu').forEach(sub => {
-                sub.style.display = 'none';
-            });
-            fabMenu.style.display = 'none';
-        });
-    });
-
-    
-    // Update the mapElements section in the main menu items click handler
-fabMenuItems.forEach(item => {
-    item.addEventListener('click', (e) => {
-        const mode = e.currentTarget.id;
-        console.log('FAB menu item clicked:', mode);
-
-        if (mode === 'mapElements') {
-            // Handle mapElements submenu
-            const submenu = document.getElementById('mapElementsSubmenu');
-            if (submenu) {
-                submenu.style.display = submenu.style.display === 'none' ? 'flex' : 'none';
-                
-                // Hide other submenus but keep main menu visible
-                document.querySelectorAll('.fab-submenu').forEach(sub => {
-                    if (sub.id !== 'mapElementsSubmenu') {
-                        sub.style.display = 'none';
-                    }
-                });
-                // Don't hide the main menu here
-                return; // Exit early to prevent hiding main menu
-            }
-        } else if (mode === 'diagonalPath') {
-            // Rest of diagonal handling remains the same
-            isDiagonalModeActive = !isDiagonalModeActive;
-            
-            if (isDiagonalModeActive) {
-                diagonalRotateFab.style.display = 'flex';
-                currentDiagonalIndex = 0;
-                activeDiagonalDirection = `diagonalPath${diagonalDirections[0]}`;
-                e.currentTarget.style.backgroundColor = '#4CAF50';
-                currentMode = 'diagonal';
-                
-                const rotateIcon = diagonalRotateFab.querySelector('i');
-                if (rotateIcon) {
-                    rotateIcon.textContent = 'north_east';
+                const iconElement = document.createElement('div')
+                iconElement.className = 'legend-icon'
+                if (isRpgIconAvailable) {
+                    iconElement.innerHTML = `<i class="ra ${icons.ra}"></i>`
+                } else {
+                    iconElement.innerHTML = `<i class="material-icons">${icons.material}</i>`
                 }
-            } else {
-                diagonalRotateFab.style.display = 'none';
-                e.currentTarget.style.backgroundColor = '#1E88E5';
-                activeDiagonalDirection = '';
-                currentMode = 'fill';
-            }
-            fabMenu.style.display = 'none'; // Hide menu only after handling diagonal
-        } else {
-            // Handle other menu items (eraser, save, load)
-            isDiagonalModeActive = false;
-            if (diagonalRotateFab) {
-                diagonalRotateFab.style.display = 'none';
-            }
-            const diagonalBtn = document.getElementById('diagonalPath');
-            if (diagonalBtn) {
-                diagonalBtn.style.backgroundColor = '#1E88E5';
-            }
 
-            switch(mode) {
-                case 'eraser':
-                    currentMode = 'eraser';
-                    break;
-                case 'saveMap':
-                    saveMap();
-                    break;
-                case 'loadMap':
-                    loadMap();
-                    break;
-                default:
-                    currentMode = mode.replace(/^(add|mark)/, '').toLowerCase();
+                const textElement = document.createElement('div')
+                textElement.className = 'legend-text'
+                textElement.textContent = item.label
+
+                legendItem.appendChild(iconElement)
+                legendItem.appendChild(textElement)
+                legendContent.appendChild(legendItem)
             }
-            fabMenu.style.display = 'none'; // Hide menu only after handling other items
         }
-    });
-});
 
-    // Add click handler to diagonal rotate FAB
-    diagonalRotateFab.addEventListener('click', cycleDiagonalDirection);
+        function setupLegend() {
+            const legendItems = [
+                { type: 'door', label: 'Door' },
+                { type: 'secretdoor', label: 'Secret Door' },
+                { type: 'enemy', label: 'Enemy' },
+                { type: 'stairs', label: 'Stairs' },
+                { type: 'trap', label: 'Trap' },
+                { type: 'npc', label: 'NPC' },
+                { type: 'treasure', label: 'Treasure' }
+            ]
 
-    // Close menus when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!fabBtn.contains(e.target) && 
-            !fabMenu.contains(e.target) && 
-            !diagonalRotateFab.contains(e.target)) {
-            fabMenu.style.display = 'none';
-            document.querySelectorAll('.fab-submenu').forEach(sub => {
-                sub.style.display = 'none';
-            });
+            // Create a button to toggle the legend
+            const toggleButton = document.createElement('button')
+            toggleButton.id = 'toggleLegend'
+            toggleButton.innerHTML = '?'
+            document.body.appendChild(toggleButton)
+
+            const legend = document.getElementById('legend')
+            toggleButton.addEventListener('click', () => {
+                legend.style.display =
+                    legend.style.display === 'none' ? 'block' : 'none'
+            })
+
+            // Initial creation of the legend
+            createLegend()
         }
-    });
-}
 
-function cycleDiagonalDirection(e) {
-    if (e) e.stopPropagation();
-    
-    currentDiagonalIndex = (currentDiagonalIndex + 1) % diagonalDirections.length;
-    const direction = diagonalDirections[currentDiagonalIndex];
-    activeDiagonalDirection = `diagonalPath${direction}`;
-    
-    const icon = document.querySelector('#diagonalRotateFab i');
-    if (icon) {
-        switch(direction) {
-            case 'NE':
-                icon.textContent = 'north_east';
-                break;
-            case 'SE':
-                icon.textContent = 'south_east';
-                break;
-            case 'SW':
-                icon.textContent = 'south_west';
-                break;
-            case 'NW':
-                icon.textContent = 'north_west';
-                break;
+        function setupEventListeners() {
+            const fabMenuItems = document.querySelectorAll('.fab-item')
+
+            // Ensure diagonal FAB exists
+            let diagonalRotateFab = document.getElementById('diagonalRotateFab')
+            if (!diagonalRotateFab) {
+                diagonalRotateFab = createDiagonalRotateFab()
+            }
+
+            // Main FAB button click
+            fabBtn.addEventListener('click', () => {
+                console.log('FAB button clicked')
+                fabMenu.style.display =
+                    fabMenu.style.display === 'none' ? 'flex' : 'none'
+            })
+
+            // Map Elements submenu handlers
+            document
+                .querySelectorAll('#mapElementsSubmenu .fab-item')
+                .forEach(item => {
+                    item.addEventListener('click', e => {
+                        e.stopPropagation()
+                        console.log(
+                            'Map element submenu item clicked:',
+                            e.currentTarget.id
+                        )
+                        const newMode = e.currentTarget.id
+                            .replace(/^(add|mark)/, '')
+                            .toLowerCase()
+                        console.log('Setting currentMode to:', newMode)
+                        currentMode = newMode
+
+                        // Hide submenus
+                        document.querySelectorAll('.fab-submenu').forEach(sub => {
+                            sub.style.display = 'none'
+                        })
+                        fabMenu.style.display = 'none'
+                    })
+                })
+
+            // Update the mapElements section in the main menu items click handler
+            fabMenuItems.forEach(item => {
+                item.addEventListener('click', e => {
+                    const mode = e.currentTarget.id
+                    console.log('FAB menu item clicked:', mode)
+
+                    if (mode === 'mapElements') {
+                        // Handle mapElements submenu
+                        const submenu = document.getElementById('mapElementsSubmenu')
+                        if (submenu) {
+                            submenu.style.display =
+                                submenu.style.display === 'none' ? 'flex' : 'none'
+
+                            // Hide other submenus but keep main menu visible
+                            document.querySelectorAll('.fab-submenu').forEach(sub => {
+                                if (sub.id !== 'mapElementsSubmenu') {
+                                    sub.style.display = 'none'
+                                }
+                            })
+                            // Don't hide the main menu here
+                            return // Exit early to prevent hiding main menu
+                        }
+                    } else if (mode === 'diagonalPath') {
+                        // Rest of diagonal handling remains the same
+                        isDiagonalModeActive = !isDiagonalModeActive
+
+                        if (isDiagonalModeActive) {
+                            diagonalRotateFab.style.display = 'flex'
+                            currentDiagonalIndex = 0
+                            activeDiagonalDirection = `diagonalPath${diagonalDirections[0]}`
+                            e.currentTarget.style.backgroundColor = '#4CAF50'
+                            currentMode = 'diagonal'
+
+                            const rotateIcon = diagonalRotateFab.querySelector('i')
+                            if (rotateIcon) {
+                                rotateIcon.textContent = 'north_east'
+                            }
+                        } else {
+                            diagonalRotateFab.style.display = 'none'
+                            e.currentTarget.style.backgroundColor = '#1E88E5'
+                            activeDiagonalDirection = ''
+                            currentMode = 'fill'
+                        }
+                        fabMenu.style.display = 'none' // Hide menu only after handling diagonal
+                    } else {
+                        // Handle other menu items (eraser, save, load)
+                        isDiagonalModeActive = false
+                        if (diagonalRotateFab) {
+                            diagonalRotateFab.style.display = 'none'
+                        }
+                        const diagonalBtn = document.getElementById('diagonalPath')
+                        if (diagonalBtn) {
+                            diagonalBtn.style.backgroundColor = '#1E88E5'
+                        }
+
+                        switch (mode) {
+                            case 'eraser':
+                                currentMode = 'eraser'
+                                break
+                            case 'saveMap':
+                                saveMap()
+                                break
+                            case 'loadMap':
+                                loadMap()
+                                break
+                            default:
+                                currentMode = mode.replace(/^(add|mark)/, '').toLowerCase()
+                        }
+                        fabMenu.style.display = 'none' // Hide menu only after handling other items
+                    }
+                })
+            })
+
+            // Add click handler to diagonal rotate FAB
+            diagonalRotateFab.addEventListener('click', cycleDiagonalDirection)
+
+            // Close menus when clicking outside
+            document.addEventListener('click', e => {
+                if (
+                    !fabBtn.contains(e.target) &&
+                    !fabMenu.contains(e.target) &&
+                    !diagonalRotateFab.contains(e.target)
+                ) {
+                    fabMenu.style.display = 'none'
+                    document.querySelectorAll('.fab-submenu').forEach(sub => {
+                        sub.style.display = 'none'
+                    })
+                }
+            })
         }
-    }
-    
-    console.log('Diagonal direction changed to:', activeDiagonalDirection);
-}
+
+        function cycleDiagonalDirection(e) {
+            if (e) e.stopPropagation()
+
+            currentDiagonalIndex =
+                (currentDiagonalIndex + 1) % diagonalDirections.length
+            const direction = diagonalDirections[currentDiagonalIndex]
+            activeDiagonalDirection = `diagonalPath${direction}`
+
+            const icon = document.querySelector('#diagonalRotateFab i')
+            if (icon) {
+                switch (direction) {
+                    case 'NE':
+                        icon.textContent = 'north_east'
+                        break
+                    case 'SE':
+                        icon.textContent = 'south_east'
+                        break
+                    case 'SW':
+                        icon.textContent = 'south_west'
+                        break
+                    case 'NW':
+                        icon.textContent = 'north_west'
+                        break
+                }
+            }
+
+            console.log('Diagonal direction changed to:', activeDiagonalDirection)
+        }
 
         // Save and Load Functions
-function saveMap() {
-    const filledCells = [];
-    const specialCells = [];
+        function saveMap() {
+            const filledCells = []
+            const specialCells = []
 
-    cells.forEach((cell, key) => {
-        const [row, col] = key.split('-').map(Number);
-        if (cell.classList.contains('filled')) {
-            filledCells.push({ row, col });
-            
-            // Check for diagonal paths
-            const diagonalDirections = ['ne', 'se', 'sw', 'nw'];
-            const diagonalDirection = diagonalDirections.find(dir => 
-                cell.classList.contains(`diagonal-${dir}`)
-            );
-            
-            if (diagonalDirection) {
-                specialCells.push({
-                    row,
-                    col,
-                    type: 'diagonal',
-                    direction: diagonalDirection
-                });
-            } else {
-                const iconElement = cell.querySelector('i');
-                if (iconElement) {
-                    const type = getElementTypeFromIcon(iconElement);
-                    specialCells.push({
-                        row,
-                        col,
-                        type,
-                        isSecret: cell.classList.contains('secret-element'),
-                        isRevealed: cell.classList.contains('revealed')
-                    });
+            cells.forEach((cell, key) => {
+                const [row, col] = key.split('-').map(Number)
+                if (cell.classList.contains('filled')) {
+                    filledCells.push({ row, col })
+
+                    // Check for diagonal paths
+                    const diagonalDirections = ['ne', 'se', 'sw', 'nw']
+                    const diagonalDirection = diagonalDirections.find(dir =>
+                        cell.classList.contains(`diagonal-${dir}`)
+                    )
+
+                    if (diagonalDirection) {
+                        specialCells.push({
+                            row,
+                            col,
+                            type: 'diagonal',
+                            direction: diagonalDirection
+                        })
+                    } else {
+                        const iconElement = cell.querySelector('i')
+                        if (iconElement) {
+                            const type = getElementTypeFromIcon(iconElement)
+                            specialCells.push({
+                                row,
+                                col,
+                                type,
+                                isSecret: cell.classList.contains('secret-element'),
+                                isRevealed: cell.classList.contains('revealed')
+                            })
+                        }
+                    }
                 }
+            })
+
+            const saveData = {
+                filledCells,
+                specialCells
             }
-        }
-    });
 
-    const saveData = {
-        filledCells,
-        specialCells
-    };
-
-    const mapJson = JSON.stringify(saveData);
-    const blob = new Blob([mapJson], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const filename = "TapMap_" + new Date().toJSON().slice(0,10) + ".json";
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
-
-
-function getElementTypeFromIcon(iconElement) {
-    if (iconElement.classList.contains('ra')) {
-        return Object.keys(iconMap).find(key => iconElement.classList.contains(iconMap[key].ra));
-    } else if (iconElement.classList.contains('material-icons')) {
-        return Object.keys(iconMap).find(key => iconElement.textContent === iconMap[key].material);
-    }
-    return null;
-}
-
-// Updated loadMap function
-function loadMap() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'application/json';
-    input.onchange = (event) => {
-        const file = event.target.files[0];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const loadedData = JSON.parse(e.target.result);
-            renderLoadedMap(loadedData);
-        };
-        reader.readAsText(file);
-    };
-    input.click();
-}
-
-// Updated renderLoadedMap function
-async function renderLoadedMap(loadedData) {
-    // Clear all existing cells
-    cells.clear();
-    grid.innerHTML = '';
-
-    // Calculate required grid size
-    const maxRow = Math.max(...loadedData.filledCells.map(cell => cell.row), ...loadedData.specialCells.map(cell => cell.row));
-    const maxCol = Math.max(...loadedData.filledCells.map(cell => cell.col), ...loadedData.specialCells.map(cell => cell.col));
-    
-    const requiredGridSize = Math.max(maxRow, maxCol, gridSize) + 1;
-    
-    if (requiredGridSize > gridSize) {
-        grid.style.width = `${requiredGridSize * cellSize}px`;
-        grid.style.height = `${requiredGridSize * cellSize}px`;
-    }
-
-    // First, create and fill all the blue cells
-    loadedData.filledCells.forEach(({ row, col }) => {
-        const cell = createCell(row, col);
-        cell.classList.add('filled');
-        updateBorders(cell, row, col);
-    });
-
-    // Then, add special elements
-    for (const cellData of loadedData.specialCells) {
-        const { row, col, type, isSecret, isRevealed, direction } = cellData;
-        const cell = createCell(row, col);
-        
-        if (!cell) continue;
-
-        if (type === 'diagonal') {
-            cell.classList.add(`diagonal-${direction}`, 'filled');
-            updateBorders(cell, row, col);
-            continue;
-        }
-        
-        cell.classList.add('filled');
-        const icons = getIconClass(type);
-        const isRpgIconAvailable = await checkIconAvailability(icons.ra);
-
-        const iconElement = document.createElement('i');
-        if (isRpgIconAvailable) {
-            iconElement.className = `ra ${icons.ra}`;
-        } else {
-            iconElement.className = 'material-icons';
-            iconElement.textContent = icons.material;
+            const mapJson = JSON.stringify(saveData)
+            const blob = new Blob([mapJson], { type: 'application/json' })
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            const filename = 'TapMap_' + new Date().toJSON().slice(0, 10) + '.json'
+            a.download = filename
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+            URL.revokeObjectURL(url)
         }
 
-        if (isSecret) {
-            cell.classList.add('secret-element');
-            if (isRevealed) {
-                cell.classList.add('revealed');
+        function getElementTypeFromIcon(iconElement) {
+            if (iconElement.classList.contains('ra')) {
+                return Object.keys(iconMap).find(key =>
+                    iconElement.classList.contains(iconMap[key].ra)
+                )
+            } else if (iconElement.classList.contains('material-icons')) {
+                return Object.keys(iconMap).find(
+                    key => iconElement.textContent === iconMap[key].material
+                )
             }
-            const secretContainer = document.createElement('div');
-            secretContainer.className = 'secret-container';
-            secretContainer.appendChild(iconElement);
-            cell.appendChild(secretContainer);
-            
-            cell.addEventListener('click', (e) => {
-                e.stopPropagation();
-                cell.classList.toggle('revealed');
-            });
-        } else {
-            cell.appendChild(iconElement);
+            return null
         }
 
-        updateBorders(cell, row, col);
-    }
+        // Updated loadMap function
+        function loadMap() {
+            const input = document.createElement('input')
+            input.type = 'file'
+            input.accept = 'application/json'
+            input.onchange = event => {
+                const file = event.target.files[0]
+                const reader = new FileReader()
+                reader.onload = e => {
+                    const loadedData = JSON.parse(e.target.result)
+                    renderLoadedMap(loadedData)
+                }
+                reader.readAsText(file)
+            }
+            input.click()
+        }
 
-    // Update visible cells and redraw coordinate labels
-    updateVisibleCells();
-    updateGridTransform();
-}
+        // Updated renderLoadedMap function
+        async function renderLoadedMap(loadedData) {
+            // Clear all existing cells
+            cells.clear()
+            grid.innerHTML = ''
 
+            // Calculate required grid size
+            const maxRow = Math.max(
+                ...loadedData.filledCells.map(cell => cell.row),
+                ...loadedData.specialCells.map(cell => cell.row)
+            )
+            const maxCol = Math.max(
+                ...loadedData.filledCells.map(cell => cell.col),
+                ...loadedData.specialCells.map(cell => cell.col)
+            )
+
+            const requiredGridSize = Math.max(maxRow, maxCol, gridSize) + 1
+
+            if (requiredGridSize > gridSize) {
+                grid.style.width = `${requiredGridSize * cellSize}px`
+                grid.style.height = `${requiredGridSize * cellSize}px`
+            }
+
+            // First, create and fill all the blue cells
+            loadedData.filledCells.forEach(({ row, col }) => {
+                const cell = createCell(row, col)
+                cell.classList.add('filled')
+                updateBorders(cell, row, col)
+            })
+
+            // Then, add special elements
+            for (const cellData of loadedData.specialCells) {
+                const { row, col, type, isSecret, isRevealed, direction } = cellData
+                const cell = createCell(row, col)
+
+                if (!cell) continue
+
+                if (type === 'diagonal') {
+                    cell.classList.add(`diagonal-${direction}`, 'filled')
+                    updateBorders(cell, row, col)
+                    continue
+                }
+
+                cell.classList.add('filled')
+                const icons = getIconClass(type)
+                const isRpgIconAvailable = await checkIconAvailability(icons.ra)
+
+                const iconElement = document.createElement('i')
+                if (isRpgIconAvailable) {
+                    iconElement.className = `ra ${icons.ra}`
+                } else {
+                    iconElement.className = 'material-icons'
+                    iconElement.textContent = icons.material
+                }
+
+                if (isSecret) {
+                    cell.classList.add('secret-element')
+                    if (isRevealed) {
+                        cell.classList.add('revealed')
+                    }
+                    const secretContainer = document.createElement('div')
+                    secretContainer.className = 'secret-container'
+                    secretContainer.appendChild(iconElement)
+                    cell.appendChild(secretContainer)
+
+                    cell.addEventListener('click', e => {
+                        e.stopPropagation()
+                        cell.classList.toggle('revealed')
+                    })
+                } else {
+                    cell.appendChild(iconElement)
+                }
+
+                updateBorders(cell, row, col)
+            }
+
+            // Update visible cells and redraw coordinate labels
+            updateVisibleCells()
+            updateGridTransform()
+        }
 
         // Event Listeners
-        gridContainer.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    const newScale = scale * delta;
-    if (newScale >= 0.5 && newScale <= 3) {
-        const rect = gridContainer.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left - 20; // Subtract 20px offset
-        const mouseY = e.clientY - rect.top - 20;  // Subtract 20px offset
-        
-        const gridX = mouseX / scale - translateX;
-        const gridY = mouseY / scale - translateY;
-        
-        translateX -= gridX * (delta - 1);
-        translateY -= gridY * (delta - 1);
-        
-        scale = newScale;
-        updateGridTransform();
-    }
-});
+        gridContainer.addEventListener('wheel', e => {
+            e.preventDefault()
+            const delta = e.deltaY > 0 ? 0.9 : 1.1
+            const newScale = scale * delta
+            if (newScale >= 0.5 && newScale <= 3) {
+                const rect = gridContainer.getBoundingClientRect()
+                const mouseX = e.clientX - rect.left - 20 // Subtract 20px offset
+                const mouseY = e.clientY - rect.top - 20 // Subtract 20px offset
 
-gridContainer.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    const rect = gridContainer.getBoundingClientRect();
-    lastX = e.clientX - rect.left - 20; // Subtract 20px offset
-    lastY = e.clientY - rect.top - 20;  // Subtract 20px offset
-});
+                const gridX = mouseX / scale - translateX
+                const gridY = mouseY / scale - translateY
 
-gridContainer.addEventListener('mousemove', (e) => {
-    if (isDragging) {
-        const dx = e.clientX - lastX;
-        const dy = e.clientY - lastY;
-        
-        // Store old values
-        const oldTranslateX = translateX;
-        const oldTranslateY = translateY;
-        
-        // Calculate new positions
-        const newTranslateX = translateX + dx / scale;
-        const newTranslateY = translateY + dy / scale;
-        
-        // Check boundaries
-        const maxTranslate = totalGridSize * scale;
-        if (newTranslateX > maxTranslate || newTranslateX < -maxTranslate ||
-            newTranslateY > maxTranslate || newTranslateY < -maxTranslate) {
-            console.log('Prevented out-of-bounds panning');
-            return;
-        }
-        
-        // Apply new positions
-        translateX = newTranslateX;
-        translateY = newTranslateY;
-        lastX = e.clientX;
-        lastY = e.clientY;
-        
-        // Update grid
-        updateGridTransform();
-        
-        // Check if transform caused unexpected changes
-        if (Math.abs(translateX - newTranslateX) > 1 || Math.abs(translateY - newTranslateY) > 1) {
-            console.log('Correcting unexpected transform change');
-            translateX = oldTranslateX;
-            translateY = oldTranslateY;
-            updateGridTransform();
-        }
-    }
-});
+                translateX -= gridX * (delta - 1)
+                translateY -= gridY * (delta - 1)
+
+                scale = newScale
+                updateGridTransform()
+            }
+        })
+
+        gridContainer.addEventListener('mousedown', e => {
+            isDragging = true
+            const rect = gridContainer.getBoundingClientRect()
+            lastX = e.clientX - rect.left - 20 // Subtract 20px offset
+            lastY = e.clientY - rect.top - 20 // Subtract 20px offset
+        })
+
+        gridContainer.addEventListener('mousemove', e => {
+            if (isDragging) {
+                const dx = e.clientX - lastX
+                const dy = e.clientY - lastY
+
+                // Store old values
+                const oldTranslateX = translateX
+                const oldTranslateY = translateY
+
+                // Calculate new positions
+                const newTranslateX = translateX + dx / scale
+                const newTranslateY = translateY + dy / scale
+
+                // Check boundaries
+                const maxTranslate = totalGridSize * scale
+                if (
+                    newTranslateX > maxTranslate ||
+                    newTranslateX < -maxTranslate ||
+                    newTranslateY > maxTranslate ||
+                    newTranslateY < -maxTranslate
+                ) {
+                    console.log('Prevented out-of-bounds panning')
+                    return
+                }
+
+                // Apply new positions
+                translateX = newTranslateX
+                translateY = newTranslateY
+                lastX = e.clientX
+                lastY = e.clientY
+
+                // Update grid
+                updateGridTransform()
+
+                // Check if transform caused unexpected changes
+                if (
+                    Math.abs(translateX - newTranslateX) > 1 ||
+                    Math.abs(translateY - newTranslateY) > 1
+                ) {
+                    console.log('Correcting unexpected transform change')
+                    translateX = oldTranslateX
+                    translateY = oldTranslateY
+                    updateGridTransform()
+                }
+            }
+        })
 
         gridContainer.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
+            isDragging = false
+        })
 
         gridContainer.addEventListener('mouseleave', () => {
-            isDragging = false;
-        });
+            isDragging = false
+        })
 
-        let lastDistance = 0;
-        gridContainer.addEventListener('touchstart', (e) => {
-    const rect = gridContainer.getBoundingClientRect();
-    if (e.touches.length === 2) {
-        const touch1 = e.touches[0];
-        const touch2 = e.touches[1];
-        lastDistance = Math.hypot(
-            touch1.clientX - touch2.clientX,
-            touch1.clientY - touch2.clientY
-        );
-    } else if (e.touches.length === 1) {
-        isDragging = true;
-        lastX = e.touches[0].clientX - rect.left - 20; // Subtract 20px offset
-        lastY = e.touches[0].clientY - rect.top - 20;  // Subtract 20px offset
-    }
-});
+        let lastDistance = 0
+        gridContainer.addEventListener('touchstart', e => {
+            const rect = gridContainer.getBoundingClientRect()
+            if (e.touches.length === 2) {
+                const touch1 = e.touches[0]
+                const touch2 = e.touches[1]
+                lastDistance = Math.hypot(
+                    touch1.clientX - touch2.clientX,
+                    touch1.clientY - touch2.clientY
+                )
+            } else if (e.touches.length === 1) {
+                isDragging = true
+                lastX = e.touches[0].clientX - rect.left - 20 // Subtract 20px offset
+                lastY = e.touches[0].clientY - rect.top - 20 // Subtract 20px offset
+            }
+        })
 
-        gridContainer.addEventListener('touchmove', (e) => {
-            e.preventDefault();
+        gridContainer.addEventListener('touchmove', e => {
+            e.preventDefault()
             if (e.touches.length === 2) {
                 const distance = Math.hypot(
                     e.touches[0].clientX - e.touches[1].clientX,
                     e.touches[0].clientY - e.touches[1].clientY
-                );
-                const delta = distance / lastDistance;
-                const newScale = scale * delta;
+                )
+                const delta = distance / lastDistance
+                const newScale = scale * delta
                 if (newScale >= 0.5 && newScale <= 3) {
-                    const rect = gridContainer.getBoundingClientRect();
-                    const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
-                    const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
-                    
-                    const gridX = centerX / scale - translateX;
-                    const gridY = centerY / scale - translateY;
-                    
-                    translateX -= gridX * (delta - 1);
-                    translateY -= gridY * (delta - 1);
-                    
-                    scale = newScale;
-                    updateGridTransform();
+                    const rect = gridContainer.getBoundingClientRect()
+                    const centerX =
+                        (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left
+                    const centerY =
+                        (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top
+
+                    const gridX = centerX / scale - translateX
+                    const gridY = centerY / scale - translateY
+
+                    translateX -= gridX * (delta - 1)
+                    translateY -= gridY * (delta - 1)
+
+                    scale = newScale
+                    updateGridTransform()
                 }
-                lastDistance = distance;
+                lastDistance = distance
             } else if (e.touches.length === 1 && isDragging) {
-                const dx = e.touches[0].clientX - lastX;
-                const dy = e.touches[0].clientY - lastY;
-                translateX += dx / scale;
-                translateY += dy / scale;
-                lastX = e.touches[0].clientX;
-                lastY = e.touches[0].clientY;
-                updateGridTransform();
+                const dx = e.touches[0].clientX - lastX
+                const dy = e.touches[0].clientY - lastY
+                translateX += dx / scale
+                translateY += dy / scale
+                lastX = e.touches[0].clientX
+                lastY = e.touches[0].clientY
+                updateGridTransform()
             }
-        });
+        })
 
         gridContainer.addEventListener('touchend', () => {
-            isDragging = false;
-        });
+            isDragging = false
+        })
 
         readyBtn.addEventListener('click', () => {
-    startMenu.style.display = 'none';
-    // Instead of createGrid(), just update the visible cells
-    updateVisibleCells();
-});
+            startMenu.style.display = 'none'
+            // Instead of createGrid(), just update the visible cells
+            updateVisibleCells()
+        })
 
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', e => {
             if (!fabBtn.contains(e.target) && !fabMenu.contains(e.target)) {
-                fabMenu.style.display = 'none';
-                const mapElementsSubmenu = document.getElementById('mapElementsSubmenu');
+                fabMenu.style.display = 'none'
+                const mapElementsSubmenu =
+                    document.getElementById('mapElementsSubmenu')
                 if (mapElementsSubmenu) {
-                    mapElementsSubmenu.style.display = 'none';
+                    mapElementsSubmenu.style.display = 'none'
                 }
-                currentMode = 'fill';
+                currentMode = 'fill'
             }
-        });
+        })
 
-        window.addEventListener('resize', createGrid);
+        window.addEventListener('resize', createGrid)
 
         // Initialization
         async function initializeApp() {
-    await createFabMenu();
-    setupEventListeners();
-    setupLegend();
-    }
+            await createFabMenu()
+            setupEventListeners()
+            setupLegend()
+        }
 
-// Call this function when the document is ready
-document.addEventListener('DOMContentLoaded', () => {
-    initializeApp();
-    createGrid(); // Create the grid immediately
-});
+        // Call this function when the document is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp()
+            createGrid() // Create the grid immediately
+        })
     </script>
 </body>
+
 </html>
