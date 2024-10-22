@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grid Builder</title>
-    <meta name="description" content="Interactive grid-based building game with doors, enemies, and stairs.">
+    <title>TapMap</title>
+    <meta name="description" content="A classic D&D grid mapper with doors, enemies, stairs, etc.">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://nagoshiashumari.github.io/Rpg-Awesome/stylesheets/rpg-awesome.min.css">
     <style>
@@ -45,26 +45,43 @@
         justify-content: center;
         background-color: rgba(255, 255, 255, 0.7);
     }
-        .cell {
-            width: 40px;
-            height: 40px;
-            border: 1px solid #ccc;
-            position: absolute;
-            box-sizing: border-box;
-        }
-        .cell.filled {
-            background-color: #87CEFA;
-        }
-        .cell.filled::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border: 2px solid black;
-            pointer-events: none;
-        }
+    .cell {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ccc;
+    position: absolute;
+    box-sizing: border-box;
+}
+.cell i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    z-index: 10;
+    pointer-events: none;
+    /* Debug styles */
+    color: black;
+    text-shadow: 1px 1px 1px white;
+}
+
+.cell.filled {
+    background-color: #87CEFA;
+}
+
+.cell.filled::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #87CEFA;
+    border: 2px solid black;
+    pointer-events: none;
+    z-index: 1;
+}
+
         .cell.filled.left::before { border-left-color: #87CEFA; }
         .cell.filled.right::before { border-right-color: #87CEFA; }
         .cell.filled.top::before { border-top-color: #87CEFA; }
@@ -172,6 +189,15 @@
         .secret-element.revealed .secret-container::after {
             display: none;
         }
+        .secret-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
         .legend {
         position: fixed;
         top: 20px;
@@ -240,29 +266,123 @@
         justify-content: center;
         background-color: rgba(255, 255, 255, 0.7);
     }
-    .cell.diagonal-ne {
-        background: linear-gradient(to top right, white 49%, black 49% 51%, #87CEFA 51%);
-    }
-    .cell.diagonal-se {
-        background: linear-gradient(to bottom right, white 49%, black 49% 51%, #87CEFA 51%);
-    }
-    .cell.diagonal-sw {
-        background: linear-gradient(to bottom left, white 49%, black 49% 51%, #87CEFA 51%);
-    }
-    .cell.diagonal-nw {
-        background: linear-gradient(to top left, white 49%, black 49% 51%, #87CEFA 51%);
-    }
+
+.cell.diagonal-se {
+    background: linear-gradient(to bottom right, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
+    border: 1px solid #ccc !important;
+}
+
+.cell.diagonal-sw {
+    background: linear-gradient(to bottom left, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
+    border: 1px solid #ccc !important;
+}
+
+.cell.diagonal-ne {
+    background: linear-gradient(to top right, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
+    border: 1px solid #ccc !important;
+}
+
+.cell.diagonal-nw {
+    background: linear-gradient(to top left, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
+    border: 1px solid #ccc !important;
+}
+
+.cell.diagonal-ne::before,
+.cell.diagonal-se::before,
+.cell.diagonal-sw::before,
+.cell.diagonal-nw::before {
+    border: none !important;
+}
+
+.cell.filled.connected-left::before { 
+    border-left: none !important; 
+}
+.cell.filled.connected-right::before { 
+    border-right: none !important; 
+}
+.cell.filled.connected-top::before { 
+    border-top: none !important; 
+}
+.cell.filled.connected-bottom::before { 
+    border-bottom: none !important; 
+}
+.diagonal-rotate-fab {
+    position: fixed;
+    bottom: 20px;
+    right: 90px; /* Position it to the left of the main FAB */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #1E88E5;
+    color: white;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+}
+
+.diagonal-rotate-fab i {
+    font-size: 20px;
+}
+
+.diagonal-rotate-fab.active {
+    background-color: #4CAF50;
+}
+
+.cell.diagonal-ne {
+    background: linear-gradient(to top right, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
+    border: 1px solid #ccc !important;
+}
+
+.cell.diagonal-se {
+    background: linear-gradient(to bottom right, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
+    border: 1px solid #ccc !important;
+}
+
+.cell.diagonal-sw {
+    background: linear-gradient(to bottom left, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
+    border: 1px solid #ccc !important;
+}
+
+.cell.diagonal-nw {
+    background: linear-gradient(to top left, #FFFFFF 49%, #000000 49% 51%, #87CEFA 51%);
+    border: 1px solid #ccc !important;
+}
+
+
+
+.cell.diagonal-ne i,
+.cell.diagonal-se i,
+.cell.diagonal-sw i,
+.cell.diagonal-nw i {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    z-index: 20 !important; /* Ensure icon is above the diagonal */
+    pointer-events: none;
+    color: black; /* Make sure icon is visible */
+    text-shadow: 1px 1px 1px white; /* Optional: add contrast */
+}
+
+.cell.diagonal-ne .secret-container i,
+.cell.diagonal-se .secret-container i,
+.cell.diagonal-sw .secret-container i,
+.cell.diagonal-nw .secret-container i {
+    font-size: 16px;
+}
+
     </style>
 </head>
 <body>
     <div id="startMenu">
-        <h1>Grid Builder</h1>
-        <p>Tap grid squares to fill them. Use the menu to add doors, enemies, and stairs.</p>
+        <h1>TapMap</h1>
+        <p>Tap grid squares to fill them. Use the menu to add doors, enemies, stairs, etc.</p>
         <button id="readyBtn">Ready</button>
     </div>
     <div id="map-area">
-        <!-- <div id="row-labels"></div>
-        <div id="col-labels"></div> -->
         <div id="grid-container">
             <div id="grid"></div>
         </div>
@@ -310,17 +430,14 @@
         { id: 'addNpc', icon: { ra: 'ra-player', material: 'person' } },
         { id: 'addTreasure', icon: { ra: 'ra-treasure-map', material: 'attach_money' } }
     ]},
-    { id: 'diagonalPath', icon: { ra: 'ra-stairs-goal', material: 'call_split' }, submenu: [
-        { id: 'diagonalPathNE', icon: { material: 'north_east' } },
-        { id: 'diagonalPathSE', icon: { material: 'south_east' } },
-        { id: 'diagonalPathSW', icon: { material: 'south_west' } },
-        { id: 'diagonalPathNW', icon: { material: 'north_west' } }
-    ]},
+    { id: 'diagonalPath', icon: { material: 'call_split' } },
     { id: 'eraser', icon: { ra: 'ra-eraser', material: 'auto_fix_high' }, class: 'yellow' },
     { id: 'saveMap', icon: { ra: 'ra-save', material: 'save' }, class: 'red' },
     { id: 'loadMap', icon: { ra: 'ra-folder', material: 'folder_open' }, class: 'red' }
 ];
 
+let diagonalDirections = ['NE', 'SE', 'SW', 'NW'];
+let currentDiagonalIndex = 0;
 
 const iconMap = {
     'door': { ra: 'ra-wooden-door', material: 'door_front' },
@@ -331,7 +448,6 @@ const iconMap = {
     'npc': { ra: 'ra-player', material: 'person' },
     'treasure': { ra: 'ra-treasure-map', material: 'attach_money' }
 };
-
 const legendItems = [
         { type: 'door', label: 'Door' },
         { type: 'secretdoor', label: 'Secret Door' },
@@ -368,38 +484,48 @@ function getColumnLabel(col) {
 }
 
 // Update the updateVisibleCells function
+// Helper function to create a cell
+function createCell(row, col) {
+    const cellId = `${row}-${col}`;
+    let cell = cells.get(cellId);
+    
+    if (!cell) {
+        cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.style.left = `${col * cellSize}px`;
+        cell.style.top = `${row * cellSize}px`;
+        
+        if (row === 0 || col === 0) {
+            cell.classList.add('coordinate-label');
+            if (row === 0 && col === 0) {
+                cell.textContent = '';
+            } else if (row === 0) {
+                cell.textContent = getColumnLabel(col - 1);
+            } else {
+                cell.textContent = row;
+            }
+        } else {
+            cell.addEventListener('click', () => handleCellClick(cell, row, col));
+        }
+        
+        grid.appendChild(cell);
+        cells.set(cellId, cell);
+    }
+    return cell;
+}
+
+// Updated updateVisibleCells function
 function updateVisibleCells() {
-    const visibleStartCol = Math.max(0, Math.floor(-translateX / cellSize));
-    const visibleStartRow = Math.max(0, Math.floor(-translateY / cellSize));
-    const visibleEndCol = Math.min(gridSize, Math.ceil((-translateX + window.innerWidth / scale) / cellSize));
-    const visibleEndRow = Math.min(gridSize, Math.ceil((-translateY + window.innerHeight / scale) / cellSize));
+    // Add buffer zones to prevent edge triggering
+    const buffer = 5; // Number of cells to buffer
+    const visibleStartCol = Math.max(0, Math.floor(-translateX / cellSize) - buffer);
+    const visibleStartRow = Math.max(0, Math.floor(-translateY / cellSize) - buffer);
+    const visibleEndCol = Math.min(gridSize, Math.ceil((-translateX + window.innerWidth / scale) / cellSize) + buffer);
+    const visibleEndRow = Math.min(gridSize, Math.ceil((-translateY + window.innerHeight / scale) / cellSize) + buffer);
 
     for (let row = visibleStartRow; row < visibleEndRow; row++) {
         for (let col = visibleStartCol; col < visibleEndCol; col++) {
-            const cellId = `${row}-${col}`;
-            if (!cells.has(cellId)) {
-                const cell = document.createElement('div');
-                cell.classList.add('cell');
-                cell.style.left = `${col * cellSize}px`;
-                cell.style.top = `${row * cellSize}px`;
-                
-                // Add coordinate labels to first row and column
-                if (row === 0 || col === 0) {
-                    cell.classList.add('coordinate-label');
-                    if (row === 0 && col === 0) {
-                        cell.textContent = '';  // Leave top-left cell empty
-                    } else if (row === 0) {
-                        cell.textContent = getColumnLabel(col - 1);  // Use your column labeling function
-                    } else {
-                        cell.textContent = row;
-                    }
-                } else {
-                    cell.addEventListener('click', () => handleCellClick(cell, row, col));
-                }
-                
-                grid.appendChild(cell);
-                cells.set(cellId, cell);
-            }
+            createCell(row, col);
         }
     }
 }
@@ -437,10 +563,24 @@ function updateVisibleCells() {
         colLabels.style.transform = `translateX(${translateX}px) scale(${scale})`;
     }
 
-    // Modify your existing updateGridTransform function
     function updateGridTransform() {
+    // Store current transform values
+    const oldTranslateX = translateX;
+    const oldTranslateY = translateY;
+    
+    // Apply transform
     grid.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+    
+    // Update visible cells
     updateVisibleCells();
+    
+    // Check if transform values changed unexpectedly
+    if (translateX !== oldTranslateX || translateY !== oldTranslateY) {
+        console.log('Transform values changed unexpectedly, resetting');
+        translateX = oldTranslateX;
+        translateY = oldTranslateY;
+        grid.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+    }
 }
 
 function screenToGridCoordinates(screenX, screenY) {
@@ -459,20 +599,29 @@ function updateDiagonalModeIndicator() {
     if (diagonalPathButton) {
         diagonalPathButton.style.backgroundColor = isDiagonalModeActive ? '#4CAF50' : '#1E88E5';
     }
-    // Update submenu item colors
+    
     document.querySelectorAll('#diagonalPathSubmenu .fab-item').forEach(item => {
-        item.style.backgroundColor = item.id.toLowerCase() === activeDiagonalDirection ? '#4CAF50' : '#1E88E5';
+        const isActive = isDiagonalModeActive && item.id.toLowerCase() === activeDiagonalDirection.toLowerCase();
+        item.style.backgroundColor = isActive ? '#4CAF50' : '#1E88E5';
     });
 }
 
 // Update the handleCellClick function
 function handleCellClick(cell, row, col) {
-    if (row === 0 || col === 0) return;  // Ignore clicks on coordinate labels
+    const oldTranslateX = translateX;
+    const oldTranslateY = translateY;
+    
+    console.log('Cell clicked:', { row, col, currentMode, isDiagonalModeActive });
+    
+    if (row === 0 || col === 0) return;
 
     if (isDiagonalModeActive && activeDiagonalDirection) {
         toggleDiagonalPath(cell, row, col, activeDiagonalDirection);
     } else {
-        switch (currentMode) {
+        const normalizedMode = currentMode.replace(/^(add|mark)/, '').toLowerCase();
+        console.log('Normalized mode:', normalizedMode);
+        
+        switch (normalizedMode) {
             case 'fill':
                 toggleFill(cell, row, col);
                 break;
@@ -480,14 +629,33 @@ function handleCellClick(cell, row, col) {
                 eraseCell(cell, row, col);
                 break;
             case 'door':
+            case 'secretdoor':
             case 'enemy':
             case 'stairs':
             case 'trap':
             case 'npc':
             case 'treasure':
-                addMapElement(cell, row, col);
+                // Allow icon placement even on diagonal cells
+                if (cell.classList.contains('filled') || 
+                    cell.classList.contains('diagonal-ne') || 
+                    cell.classList.contains('diagonal-se') || 
+                    cell.classList.contains('diagonal-sw') || 
+                    cell.classList.contains('diagonal-nw')) {
+                    addMapElement(cell, row, col, normalizedMode);
+                    console.log('Adding element with mode:', normalizedMode);
+                }
+                break;
+            default:
+                console.log('Unhandled mode:', normalizedMode);
                 break;
         }
+    }
+    
+    if (translateX !== oldTranslateX || translateY !== oldTranslateY) {
+        console.log('Correcting post-click transform change');
+        translateX = oldTranslateX;
+        translateY = oldTranslateY;
+        updateGridTransform();
     }
 }
 
@@ -495,12 +663,11 @@ function eraseCell(cell, row, col) {
     // Remove any icons from the cell
     cell.innerHTML = '';
     
-    // Remove all classes and reset background
-    cell.className = 'cell';
-    cell.style.background = '';
+    // Remove all classes except 'cell' and 'filled'
+    cell.className = 'cell filled';
     
     // Update mapData
-    mapData[row][col] = null;
+    mapData[row][col] = 'filled';
     
     // Update cell appearance
     updateBorders(cell, row, col);
@@ -517,49 +684,98 @@ function updateCellAppearance(cell, row, col) {
 }
 
 function toggleFill(cell, row, col) {
-    // Store the current transform values
-    const oldTranslateX = translateX;
-    const oldTranslateY = translateY;
-
-    cell.classList.toggle('filled');
+    console.log('Toggling fill for cell:', { row, col });
     
-    if (cell.classList.contains('filled')) {
+    // Toggle the filled class
+    cell.classList.toggle('filled');
+    const isFilled = cell.classList.contains('filled');
+    
+    if (isFilled) {
         mapData[row][col] = 'filled';
     } else {
         mapData[row][col] = null;
         cell.innerHTML = ''; // Clear any existing content when unfilling
     }
     
+    // Update borders for this cell
     updateBorders(cell, row, col);
+    
+    // Update borders for all neighboring cells
+    if (col > 0) updateBorders(getCell(row, col - 1), row, col - 1);
+    if (col < gridSize - 1) updateBorders(getCell(row, col + 1), row, col + 1);
+    if (row > 0) updateBorders(getCell(row - 1, col), row - 1, col);
+    if (row < gridSize - 1) updateBorders(getCell(row + 1, col), row + 1, col);
 
-    // Check if the transform has changed unexpectedly
-    if (translateX !== oldTranslateX || translateY !== oldTranslateY) {
-        // Reset to old values if changed
-        translateX = oldTranslateX;
-        translateY = oldTranslateY;
-        updateGridTransform();
-    }
+    console.log('Finished toggling fill. Cell state:', {
+        isFilled,
+        classList: cell.className
+    });
 }
+
+
 
 function toggleDiagonalPath(cell, row, col, direction) {
-    const diagonalClass = `diagonal-${direction.slice(-2).toLowerCase()}`;
+    console.log('Toggling diagonal path:', { row, col, direction });
     
+    // Convert direction (e.g., "diagonalPathSE") to class name (e.g., "diagonal-se")
+    const directionSuffix = direction.replace('diagonalPath', '').toLowerCase();
+    const diagonalClass = `diagonal-${directionSuffix}`;
+    
+    console.log('Using diagonal class:', diagonalClass);
+
     if (cell.classList.contains(diagonalClass)) {
         // Remove diagonal path completely
-        cell.classList.remove(diagonalClass, 'diagonal-ne', 'diagonal-se', 'diagonal-sw', 'diagonal-nw', 'filled');
+        console.log('Removing diagonal path');
+        cell.classList.remove('diagonal-ne', 'diagonal-se', 'diagonal-sw', 'diagonal-nw', 'filled');
+        cell.classList.remove('connected-left', 'connected-right', 'connected-top', 'connected-bottom');
         cell.style.background = ''; // Reset the background
         mapData[row][col] = null;
+        
+        // Remove any icons
+        const existingIcon = cell.querySelector('i');
+        if (existingIcon) {
+            existingIcon.remove();
+        }
     } else {
+        // Preserve any existing icon
+        const existingIcon = cell.querySelector('i');
+        const iconHtml = existingIcon ? existingIcon.outerHTML : '';
+        
+        // Clear existing content and classes
+        cell.innerHTML = '';
+        cell.className = 'cell';
+        
         // Add diagonal path
-        cell.classList.remove('diagonal-ne', 'diagonal-se', 'diagonal-sw', 'diagonal-nw');
-        cell.classList.add(diagonalClass, 'filled');
+        cell.classList.add(diagonalClass);
+        // Don't override the gradient background
+        cell.style.background = ''; // Remove any inline background style
         mapData[row][col] = direction;
+        
+        // Restore icon if it existed
+        if (iconHtml) {
+            cell.insertAdjacentHTML('beforeend', iconHtml);
+        }
     }
 
+    // Log the final state of the cell
+    console.log('Final cell state:', {
+        classList: cell.className,
+        backgroundStyle: cell.style.background,
+        mapData: mapData[row][col]
+    });
+
+    // Update borders for this cell and neighbors
     updateBorders(cell, row, col);
+    if (col > 0) updateBorders(getCell(row, col - 1), row, col - 1);
+    if (col < gridSize - 1) updateBorders(getCell(row, col + 1), row, col + 1);
+    if (row > 0) updateBorders(getCell(row - 1, col), row - 1, col);
+    if (row < gridSize - 1) updateBorders(getCell(row + 1, col), row + 1, col);
 }
 
+// Updated updateBorders function for diagonal handling
 function updateBorders(cell, row, col) {
+    if (!cell) return;
+    
     const directions = [
         { name: 'left', condition: col > 0, neighbor: getCell(row, col - 1) },
         { name: 'right', condition: col < gridSize - 1, neighbor: getCell(row, col + 1) },
@@ -567,41 +783,71 @@ function updateBorders(cell, row, col) {
         { name: 'bottom', condition: row < gridSize - 1, neighbor: getCell(row + 1, col) }
     ];
 
-    directions.forEach(dir => {
-        if (dir.condition && dir.neighbor) {
-            const isDiagonal = cell.classList.contains('diagonal-ne') || 
-                                cell.classList.contains('diagonal-se') || 
-                                cell.classList.contains('diagonal-sw') || 
-                                cell.classList.contains('diagonal-nw');
-            const isNeighborDiagonal = dir.neighbor.classList.contains('diagonal-ne') || 
+    // Check if this cell is diagonal
+    const isDiagonal = cell.classList.contains('diagonal-ne') || 
+                      cell.classList.contains('diagonal-se') || 
+                      cell.classList.contains('diagonal-sw') || 
+                      cell.classList.contains('diagonal-nw');
+
+    // Remove all border-related classes if it's a diagonal cell
+    if (isDiagonal) {
+        cell.classList.remove('left', 'right', 'top', 'bottom');
+        directions.forEach(dir => {
+            if (dir.condition && dir.neighbor) {
+                const isNeighborFilled = dir.neighbor.classList.contains('filled') || 
+                                       dir.neighbor.classList.contains('diagonal-ne') || 
                                        dir.neighbor.classList.contains('diagonal-se') || 
                                        dir.neighbor.classList.contains('diagonal-sw') || 
                                        dir.neighbor.classList.contains('diagonal-nw');
-
-            if (cell.classList.contains('filled') && dir.neighbor.classList.contains('filled')) {
-                if (!isDiagonal && !isNeighborDiagonal) {
-                    cell.classList.add(dir.name);
-                    dir.neighbor.classList.add(getOppositeDirection(dir.name));
-                } else {
-                    cell.classList.remove(dir.name);
-                    dir.neighbor.classList.remove(getOppositeDirection(dir.name));
+                
+                if (isNeighborFilled) {
+                    dir.neighbor.classList.add(`connected-${getOppositeDirection(dir.name)}`);
                 }
+            }
+        });
+        return;
+    }
+
+    // Handle regular cell borders
+    directions.forEach(dir => {
+        if (dir.condition && dir.neighbor) {
+            const isNeighborFilled = dir.neighbor.classList.contains('filled') || 
+                                   dir.neighbor.classList.contains('diagonal-ne') || 
+                                   dir.neighbor.classList.contains('diagonal-se') || 
+                                   dir.neighbor.classList.contains('diagonal-sw') || 
+                                   dir.neighbor.classList.contains('diagonal-nw');
+
+            if (cell.classList.contains('filled') && isNeighborFilled) {
+                cell.classList.add(`connected-${dir.name}`);
+                dir.neighbor.classList.add(`connected-${getOppositeDirection(dir.name)}`);
             } else {
-                cell.classList.remove(dir.name);
-                dir.neighbor.classList.remove(getOppositeDirection(dir.name));
+                cell.classList.remove(dir.name, `connected-${dir.name}`);
+                dir.neighbor.classList.remove(
+                    getOppositeDirection(dir.name),
+                    `connected-${getOppositeDirection(dir.name)}`
+                );
             }
         }
     });
 }
 
-        function getCell(row, col) {
-            return cells.get(`${row}-${col}`);
-        }
+function getCell(row, col) {
+    const cell = cells.get(`${row}-${col}`);
+    if (!cell) {
+        console.log('No cell found at:', { row, col });
+    }
+    return cell;
+}
 
-        function getOppositeDirection(direction) {
-            const opposites = { left: 'right', right: 'left', top: 'bottom', bottom: 'top' };
-            return opposites[direction];
-        }
+function getOppositeDirection(direction) {
+    const opposites = {
+        'left': 'right',
+        'right': 'left',
+        'top': 'bottom',
+        'bottom': 'top'
+    };
+    return opposites[direction];
+}
 
         // Icon Functions
         function checkIconAvailability(iconClass) {
@@ -643,43 +889,69 @@ function updateBorders(cell, row, col) {
     return null;
 }
 
-        function getIconClass(mode) {
-    return iconMap[mode] || { ra: '', material: '' };
+function getIconClass(mode) {
+    console.log('Getting icon class for mode:', mode);
+    const iconInfo = iconMap[mode] || { ra: '', material: '' };
+    console.log('Found icon info:', iconInfo);
+    return iconInfo;
 }
 
-async function addMapElement(cell, row, col) {
+function getActualZIndex(element) {
+    return window.getComputedStyle(element).zIndex;
+}
+
+async function addMapElement(cell, row, col, mode) {
+    console.log('addMapElement called with:', { mode, row, col });
     if (cell.classList.contains('filled')) {
-        const isDiagonal = cell.classList.contains('diagonal-ne') || 
-                           cell.classList.contains('diagonal-se') || 
-                           cell.classList.contains('diagonal-sw') || 
-                           cell.classList.contains('diagonal-nw');
+        console.log('Cell is filled, proceeding with icon placement');
         
-        // Only add elements to the blue part of diagonal paths or non-diagonal filled cells
-        if (!isDiagonal || cell.classList.contains('diagonal-ne') || cell.classList.contains('diagonal-sw')) {
-            const icons = getIconClass(currentMode);
-            const isRpgIconAvailable = await checkIconAvailability(icons.ra);
-
-            let iconElement;
-            if (isRpgIconAvailable) {
-                iconElement = `<i class="ra ${icons.ra}"></i>`;
-            } else {
-                iconElement = `<i class="material-icons">${icons.material}</i>`;
-            }
-
-            if (currentMode === 'secretdoor' || currentMode === 'trap') {
-                cell.classList.add('secret-element');
-                iconElement = `<div class="secret-container">${iconElement}</div>`;
-               
-                // Add click event to toggle reveal
-                cell.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent triggering the main cell click event
-                    cell.classList.toggle('revealed');
-                });
-            }
-
-            cell.innerHTML = iconElement;
-            mapData[row][col] = currentMode;
+        // Remove any existing icons
+        const existingIcon = cell.querySelector('i');
+        if (existingIcon) {
+            existingIcon.remove();
+            console.log('Removed existing icon');
         }
+
+        const icons = getIconClass(mode);
+        console.log('Icon class for mode:', icons);
+        const isRpgIconAvailable = await checkIconAvailability(icons.ra);
+        console.log('RPG icon available:', isRpgIconAvailable);
+
+        const iconElement = document.createElement('i');
+        iconElement.style.zIndex = '10';
+        
+        // Check if this is a diagonal cell
+        const isDiagonal = cell.classList.contains('diagonal-ne') || 
+                          cell.classList.contains('diagonal-se') || 
+                          cell.classList.contains('diagonal-sw') || 
+                          cell.classList.contains('diagonal-nw');
+
+        if (isRpgIconAvailable) {
+            iconElement.className = `ra ${icons.ra}`;
+            console.log('Using RPG icon:', icons.ra);
+        } else {
+            iconElement.className = 'material-icons';
+            iconElement.textContent = icons.material;
+            console.log('Using material icon:', icons.material);
+        }
+
+        console.log('Created icon element:', iconElement);
+
+        if (mode === 'secretdoor' || mode === 'trap') {
+            cell.classList.add('secret-element');
+            const secretContainer = document.createElement('div');
+            secretContainer.className = 'secret-container';
+            secretContainer.appendChild(iconElement);
+            cell.appendChild(secretContainer);
+            console.log('Added as secret element');
+        } else {
+            cell.appendChild(iconElement);
+            console.log('Added as regular element');
+        }
+
+        console.log('Icon added to cell. Cell contents:', cell.innerHTML);
+        mapData[row][col] = mode;
+        updateBorders(cell, row, col);
     }
 }
 
@@ -688,6 +960,7 @@ async function addMapElement(cell, row, col) {
     for (const item of menuItems) {
         const fabItem = document.createElement('div');
         fabItem.id = item.id;
+        console.log('Creating menu item:', item.id);
         fabItem.className = `fab-item ${item.class || ''}`;
         
         const icon = await createIcon(item.icon);
@@ -701,10 +974,12 @@ async function addMapElement(cell, row, col) {
             const submenu = document.createElement('div');
             submenu.className = 'fab-submenu';
             submenu.id = `${item.id}Submenu`;
+            console.log('Creating submenu:', submenu.id);
             
             for (const subItem of item.submenu) {
                 const subFabItem = document.createElement('div');
                 subFabItem.id = subItem.id;
+                console.log('Creating submenu item:', subItem.id);
                 subFabItem.className = 'fab-item';
                 
                 const subIcon = await createIcon(subItem.icon);
@@ -718,6 +993,73 @@ async function addMapElement(cell, row, col) {
             fabMenu.appendChild(submenu);
         }
     }
+}
+
+
+
+function createDiagonalRotateFab() {
+    // Remove any existing diagonal FAB first
+    const existingFab = document.getElementById('diagonalRotateFab');
+    if (existingFab) {
+        existingFab.remove();
+    }
+
+    const rotateFab = document.createElement('div');
+    rotateFab.className = 'diagonal-rotate-fab';
+    rotateFab.id = 'diagonalRotateFab';
+    
+    const icon = document.createElement('i');
+    icon.className = 'material-icons';
+    icon.textContent = 'north_east'; // Initial direction
+    
+    rotateFab.appendChild(icon);
+    document.body.appendChild(rotateFab);
+
+    // Add these styles if not already in your CSS
+    rotateFab.style.position = 'fixed';
+    rotateFab.style.bottom = '20px';
+    rotateFab.style.right = '90px';
+    rotateFab.style.width = '40px';
+    rotateFab.style.height = '40px';
+    rotateFab.style.borderRadius = '50%';
+    rotateFab.style.backgroundColor = '#1E88E5';
+    rotateFab.style.color = 'white';
+    rotateFab.style.display = 'none';
+    rotateFab.style.justifyContent = 'center';
+    rotateFab.style.alignItems = 'center';
+    rotateFab.style.cursor = 'pointer';
+    rotateFab.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
+    rotateFab.style.zIndex = '1000';
+
+    icon.style.fontSize = '20px';
+    
+    return rotateFab;
+}
+
+// Add function to cycle through diagonal directions
+function cycleDiagonalDirection() {
+    currentDiagonalIndex = (currentDiagonalIndex + 1) % diagonalDirections.length;
+    const direction = diagonalDirections[currentDiagonalIndex];
+    activeDiagonalDirection = `diagonalPath${direction}`;
+    
+    // Update the icon based on direction
+    const icon = document.querySelector('#diagonalRotateFab i');
+    switch(direction) {
+        case 'NE':
+            icon.textContent = 'north_east';
+            break;
+        case 'SE':
+            icon.textContent = 'south_east';
+            break;
+        case 'SW':
+            icon.textContent = 'south_west';
+            break;
+        case 'NW':
+            icon.textContent = 'north_west';
+            break;
+    }
+    
+    console.log('Diagonal direction changed to:', activeDiagonalDirection);
 }
 
         async function createLegend() {
@@ -778,74 +1120,116 @@ function setupLegend() {
 function setupEventListeners() {
     const fabMenuItems = document.querySelectorAll('.fab-item');
     
+    // Ensure diagonal FAB exists
+    let diagonalRotateFab = document.getElementById('diagonalRotateFab');
+    if (!diagonalRotateFab) {
+        diagonalRotateFab = createDiagonalRotateFab();
+    }
+    
+    // Main FAB button click
     fabBtn.addEventListener('click', () => {
+        console.log('FAB button clicked');
         fabMenu.style.display = fabMenu.style.display === 'none' ? 'flex' : 'none';
     });
 
-    fabMenuItems.forEach(item => {
+    // Map Elements submenu handlers
+    document.querySelectorAll('#mapElementsSubmenu .fab-item').forEach(item => {
         item.addEventListener('click', (e) => {
-            const mode = e.currentTarget.id;
-            const submenuId = `${mode}Submenu`;
-            const submenu = document.getElementById(submenuId);
+            e.stopPropagation();
+            console.log('Map element submenu item clicked:', e.currentTarget.id);
+            const newMode = e.currentTarget.id.replace(/^(add|mark)/, '').toLowerCase();
+            console.log('Setting currentMode to:', newMode);
+            currentMode = newMode;
+            
+            // Hide submenus
+            document.querySelectorAll('.fab-submenu').forEach(sub => {
+                sub.style.display = 'none';
+            });
+            fabMenu.style.display = 'none';
+        });
+    });
 
+    
+    // Update the mapElements section in the main menu items click handler
+fabMenuItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+        const mode = e.currentTarget.id;
+        console.log('FAB menu item clicked:', mode);
+
+        if (mode === 'mapElements') {
+            // Handle mapElements submenu
+            const submenu = document.getElementById('mapElementsSubmenu');
             if (submenu) {
-                // Toggle submenu visibility
                 submenu.style.display = submenu.style.display === 'none' ? 'flex' : 'none';
                 
-                // Hide other submenus
+                // Hide other submenus but keep main menu visible
                 document.querySelectorAll('.fab-submenu').forEach(sub => {
-                    if (sub.id !== submenuId) {
+                    if (sub.id !== 'mapElementsSubmenu') {
                         sub.style.display = 'none';
                     }
                 });
-
-                // If it's the diagonal path menu, toggle the diagonal mode
-                if (mode === 'diagonalPath') {
-                    isDiagonalModeActive = !isDiagonalModeActive;
-                    if (!isDiagonalModeActive) {
-                        currentMode = 'fill';
-                        activeDiagonalDirection = '';
-                    }
-                    updateDiagonalModeIndicator();
+                // Don't hide the main menu here
+                return; // Exit early to prevent hiding main menu
+            }
+        } else if (mode === 'diagonalPath') {
+            // Rest of diagonal handling remains the same
+            isDiagonalModeActive = !isDiagonalModeActive;
+            
+            if (isDiagonalModeActive) {
+                diagonalRotateFab.style.display = 'flex';
+                currentDiagonalIndex = 0;
+                activeDiagonalDirection = `diagonalPath${diagonalDirections[0]}`;
+                e.currentTarget.style.backgroundColor = '#4CAF50';
+                currentMode = 'diagonal';
+                
+                const rotateIcon = diagonalRotateFab.querySelector('i');
+                if (rotateIcon) {
+                    rotateIcon.textContent = 'north_east';
                 }
             } else {
-                // Handle non-submenu items
-                isDiagonalModeActive = false;
+                diagonalRotateFab.style.display = 'none';
+                e.currentTarget.style.backgroundColor = '#1E88E5';
                 activeDiagonalDirection = '';
-                currentMode = mode;
-                updateDiagonalModeIndicator();
-                if (mode === 'saveMap') saveMap();
-                if (mode === 'loadMap') loadMap();
-                
-                // Hide all submenus when a non-submenu item is clicked
-                document.querySelectorAll('.fab-submenu').forEach(sub => {
-                    sub.style.display = 'none';
-                });
+                currentMode = 'fill';
             }
-        });
-    });
-
-    // Set up event listeners for submenu items
-    document.querySelectorAll('.fab-submenu .fab-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent triggering the main menu item click
-            const newMode = e.currentTarget.id.toLowerCase();
-            if (newMode.startsWith('diagonalpath')) {
-                isDiagonalModeActive = true;
-                activeDiagonalDirection = newMode;
-                currentMode = newMode;
-            } else {
-                isDiagonalModeActive = false;
-                activeDiagonalDirection = '';
-                currentMode = newMode;
+            fabMenu.style.display = 'none'; // Hide menu only after handling diagonal
+        } else {
+            // Handle other menu items (eraser, save, load)
+            isDiagonalModeActive = false;
+            if (diagonalRotateFab) {
+                diagonalRotateFab.style.display = 'none';
             }
-            updateDiagonalModeIndicator();
-        });
-    });
+            const diagonalBtn = document.getElementById('diagonalPath');
+            if (diagonalBtn) {
+                diagonalBtn.style.backgroundColor = '#1E88E5';
+            }
 
-    // Close FAB menu when clicking outside
+            switch(mode) {
+                case 'eraser':
+                    currentMode = 'eraser';
+                    break;
+                case 'saveMap':
+                    saveMap();
+                    break;
+                case 'loadMap':
+                    loadMap();
+                    break;
+                default:
+                    currentMode = mode.replace(/^(add|mark)/, '').toLowerCase();
+            }
+            fabMenu.style.display = 'none'; // Hide menu only after handling other items
+        }
+    });
+});
+
+    // Add click handler to diagonal rotate FAB
+    diagonalRotateFab.addEventListener('click', cycleDiagonalDirection);
+
+    // Close menus when clicking outside
     document.addEventListener('click', (e) => {
-        if (!fabBtn.contains(e.target) && !fabMenu.contains(e.target)) {
+        if (!fabBtn.contains(e.target) && 
+            !fabMenu.contains(e.target) && 
+            !diagonalRotateFab.contains(e.target)) {
             fabMenu.style.display = 'none';
             document.querySelectorAll('.fab-submenu').forEach(sub => {
                 sub.style.display = 'none';
@@ -854,8 +1238,36 @@ function setupEventListeners() {
     });
 }
 
+function cycleDiagonalDirection(e) {
+    if (e) e.stopPropagation();
+    
+    currentDiagonalIndex = (currentDiagonalIndex + 1) % diagonalDirections.length;
+    const direction = diagonalDirections[currentDiagonalIndex];
+    activeDiagonalDirection = `diagonalPath${direction}`;
+    
+    const icon = document.querySelector('#diagonalRotateFab i');
+    if (icon) {
+        switch(direction) {
+            case 'NE':
+                icon.textContent = 'north_east';
+                break;
+            case 'SE':
+                icon.textContent = 'south_east';
+                break;
+            case 'SW':
+                icon.textContent = 'south_west';
+                break;
+            case 'NW':
+                icon.textContent = 'north_west';
+                break;
+        }
+    }
+    
+    console.log('Diagonal direction changed to:', activeDiagonalDirection);
+}
+
         // Save and Load Functions
-        function saveMap() {
+function saveMap() {
     const filledCells = [];
     const specialCells = [];
 
@@ -864,16 +1276,31 @@ function setupEventListeners() {
         if (cell.classList.contains('filled')) {
             filledCells.push({ row, col });
             
-            const iconElement = cell.querySelector('i');
-            if (iconElement) {
-                const type = getElementTypeFromIcon(iconElement);
+            // Check for diagonal paths
+            const diagonalDirections = ['ne', 'se', 'sw', 'nw'];
+            const diagonalDirection = diagonalDirections.find(dir => 
+                cell.classList.contains(`diagonal-${dir}`)
+            );
+            
+            if (diagonalDirection) {
                 specialCells.push({
                     row,
                     col,
-                    type,
-                    isSecret: cell.classList.contains('secret-element'),
-                    isRevealed: cell.classList.contains('revealed')
+                    type: 'diagonal',
+                    direction: diagonalDirection
                 });
+            } else {
+                const iconElement = cell.querySelector('i');
+                if (iconElement) {
+                    const type = getElementTypeFromIcon(iconElement);
+                    specialCells.push({
+                        row,
+                        col,
+                        type,
+                        isSecret: cell.classList.contains('secret-element'),
+                        isRevealed: cell.classList.contains('revealed')
+                    });
+                }
             }
         }
     });
@@ -888,12 +1315,15 @@ function setupEventListeners() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'rpg_map.json';
+    const filename = "TapMap_" + new Date().toJSON().slice(0,10) + ".json";
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
+
+
 
 function getElementTypeFromIcon(iconElement) {
     if (iconElement.classList.contains('ra')) {
@@ -921,40 +1351,53 @@ function loadMap() {
     input.click();
 }
 
-// Update the renderLoadedMap function
+// Updated renderLoadedMap function
 async function renderLoadedMap(loadedData) {
-    // Clear all cells first
-    cells.forEach(cell => {
-        cell.className = 'cell';
-        cell.innerHTML = '';
-    });
+    // Clear all existing cells
+    cells.clear();
+    grid.innerHTML = '';
 
-    // First, fill all the blue cells
+    // Calculate required grid size
+    const maxRow = Math.max(...loadedData.filledCells.map(cell => cell.row), ...loadedData.specialCells.map(cell => cell.row));
+    const maxCol = Math.max(...loadedData.filledCells.map(cell => cell.col), ...loadedData.specialCells.map(cell => cell.col));
+    
+    const requiredGridSize = Math.max(maxRow, maxCol, gridSize) + 1;
+    
+    if (requiredGridSize > gridSize) {
+        grid.style.width = `${requiredGridSize * cellSize}px`;
+        grid.style.height = `${requiredGridSize * cellSize}px`;
+    }
+
+    // First, create and fill all the blue cells
     loadedData.filledCells.forEach(({ row, col }) => {
-        const cellKey = `${row}-${col}`;
-        const cell = cells.get(cellKey);
-        if (cell) {
-            cell.classList.add('filled');
-            updateBorders(cell, row, col);
-        }
+        const cell = createCell(row, col);
+        cell.classList.add('filled');
+        updateBorders(cell, row, col);
     });
 
     // Then, add special elements
     for (const cellData of loadedData.specialCells) {
-        const { row, col, type, isSecret, isRevealed } = cellData;
-        const cellKey = `${row}-${col}`;
-        const cell = cells.get(cellKey);
+        const { row, col, type, isSecret, isRevealed, direction } = cellData;
+        const cell = createCell(row, col);
+        
+        if (!cell) continue;
 
-        if (!cell) continue; // Skip if cell doesn't exist in current view
-
+        if (type === 'diagonal') {
+            cell.classList.add(`diagonal-${direction}`, 'filled');
+            updateBorders(cell, row, col);
+            continue;
+        }
+        
+        cell.classList.add('filled');
         const icons = getIconClass(type);
         const isRpgIconAvailable = await checkIconAvailability(icons.ra);
 
-        let iconElement;
+        const iconElement = document.createElement('i');
         if (isRpgIconAvailable) {
-            iconElement = `<i class="ra ${icons.ra}"></i>`;
+            iconElement.className = `ra ${icons.ra}`;
         } else {
-            iconElement = `<i class="material-icons">${icons.material}</i>`;
+            iconElement.className = 'material-icons';
+            iconElement.textContent = icons.material;
         }
 
         if (isSecret) {
@@ -962,19 +1405,27 @@ async function renderLoadedMap(loadedData) {
             if (isRevealed) {
                 cell.classList.add('revealed');
             }
-            iconElement = `<div class="secret-container">${iconElement}</div>`;
+            const secretContainer = document.createElement('div');
+            secretContainer.className = 'secret-container';
+            secretContainer.appendChild(iconElement);
+            cell.appendChild(secretContainer);
             
-            // Add click event to toggle reveal
             cell.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent triggering the main cell click event
+                e.stopPropagation();
                 cell.classList.toggle('revealed');
             });
+        } else {
+            cell.appendChild(iconElement);
         }
 
-        cell.innerHTML = iconElement;
         updateBorders(cell, row, col);
     }
+
+    // Update visible cells and redraw coordinate labels
+    updateVisibleCells();
+    updateGridTransform();
 }
+
 
         // Event Listeners
         gridContainer.addEventListener('wheel', (e) => {
@@ -1004,17 +1455,45 @@ gridContainer.addEventListener('mousedown', (e) => {
     lastY = e.clientY - rect.top - 20;  // Subtract 20px offset
 });
 
-        gridContainer.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                const dx = e.clientX - lastX;
-                const dy = e.clientY - lastY;
-                translateX += dx / scale;
-                translateY += dy / scale;
-                lastX = e.clientX;
-                lastY = e.clientY;
-                updateGridTransform();
-            }
-        });
+gridContainer.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+        const dx = e.clientX - lastX;
+        const dy = e.clientY - lastY;
+        
+        // Store old values
+        const oldTranslateX = translateX;
+        const oldTranslateY = translateY;
+        
+        // Calculate new positions
+        const newTranslateX = translateX + dx / scale;
+        const newTranslateY = translateY + dy / scale;
+        
+        // Check boundaries
+        const maxTranslate = totalGridSize * scale;
+        if (newTranslateX > maxTranslate || newTranslateX < -maxTranslate ||
+            newTranslateY > maxTranslate || newTranslateY < -maxTranslate) {
+            console.log('Prevented out-of-bounds panning');
+            return;
+        }
+        
+        // Apply new positions
+        translateX = newTranslateX;
+        translateY = newTranslateY;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        
+        // Update grid
+        updateGridTransform();
+        
+        // Check if transform caused unexpected changes
+        if (Math.abs(translateX - newTranslateX) > 1 || Math.abs(translateY - newTranslateY) > 1) {
+            console.log('Correcting unexpected transform change');
+            translateX = oldTranslateX;
+            translateY = oldTranslateY;
+            updateGridTransform();
+        }
+    }
+});
 
         gridContainer.addEventListener('mouseup', () => {
             isDragging = false;
