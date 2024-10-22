@@ -9,441 +9,479 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="stylesheet" href="https://nagoshiashumari.github.io/Rpg-Awesome/stylesheets/rpg-awesome.min.css" />
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            touch-action: manipulation;
-            user-select: none;
-            overflow: hidden;
-        }
+/* Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    touch-action: manipulation;
+    user-select: none;
+    overflow: hidden;
+}
 
-        #map-area {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-        }
+/* Grid Layout */
+#map-area {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
 
-        #grid-container {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 0;
-            bottom: 0;
-            overflow: hidden;
-            z-index: 1000;
-        }
+#grid-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 1000;
+}
 
-        #grid {
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform-origin: 0 0;
-        }
+#grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: 0 0;
+}
 
-        .grid-label {
-            position: absolute;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(255, 255, 255, 0.7);
-        }
+/* Cell Base Styles */
+.cell {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ccc;
+    position: absolute;
+    box-sizing: border-box;
+}
 
-        .cell {
-            width: 40px;
-            height: 40px;
-            border: 1px solid #ccc;
-            position: absolute;
-            box-sizing: border-box;
-        }
+/* Filled Cell Styles */
+.cell.filled {
+    background-color: #87cefa;
+}
 
-        .cell i {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            z-index: 10;
-            pointer-events: none;
-            /* Debug styles */
-            color: black;
-            text-shadow: 1px 1px 1px white;
-        }
+.cell.filled::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #87cefa;
+    border: 2px solid black;
+    pointer-events: none;
+    z-index: 1;
+}
 
-        .cell.filled {
-            background-color: #87cefa;
-        }
+/* Connected Cell Borders */
+.cell.filled.left::before { border-left-color: #87cefa; }
+.cell.filled.right::before { border-right-color: #87cefa; }
+.cell.filled.top::before { border-top-color: #87cefa; }
+.cell.filled.bottom::before { border-bottom-color: #87cefa; }
 
-        .cell.filled::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #87cefa;
-            border: 2px solid black;
-            pointer-events: none;
-            z-index: 1;
-        }
+.cell.filled.connected-left::before { border-left: none !important; }
+.cell.filled.connected-right::before { border-right: none !important; }
+.cell.filled.connected-top::before { border-top: none !important; }
+.cell.filled.connected-bottom::before { border-bottom: none !important; }
 
-        .cell.filled.left::before {
-            border-left-color: #87cefa;
-        }
+/* Diagonal Cell Styles */
+.cell.diagonal-ne,
+.cell.diagonal-se,
+.cell.diagonal-sw,
+.cell.diagonal-nw {
+    position: absolute !important;
+    transform: none !important;
+    width: 40px !important;
+    height: 40px !important;
+    box-sizing: border-box !important;
+    border: 1px solid #ccc !important;
+}
 
-        .cell.filled.right::before {
-            border-right-color: #87cefa;
-        }
+/* .cell.diagonal-ne,
+.cell.diagonal-se,
+.cell.diagonal-sw,
+.cell.diagonal-nw {
+    position: relative !important;
+    overflow: visible !important;
+} */
 
-        .cell.filled.top::before {
-            border-top-color: #87cefa;
-        }
+.cell.diagonal-ne { background: linear-gradient(to top right, #ffffff 49%, #000000 49% 51%, #87cefa 51%); }
+.cell.diagonal-se { background: linear-gradient(to bottom right, #ffffff 49%, #000000 49% 51%, #87cefa 51%); }
+.cell.diagonal-sw { background: linear-gradient(to bottom left, #ffffff 49%, #000000 49% 51%, #87cefa 51%); }
+.cell.diagonal-nw { background: linear-gradient(to top left, #ffffff 49%, #000000 49% 51%, #87cefa 51%); }
 
-        .cell.filled.bottom::before {
-            border-bottom-color: #87cefa;
-        }
+.cell.diagonal-ne::before,
+.cell.diagonal-se::before,
+.cell.diagonal-sw::before,
+.cell.diagonal-nw::before {
+    border: none !important;
+}
 
-        .cell i,
-        .cell .secret-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            z-index: 2;
-        }
+/* Icon Styles */
+.cell i {
+    position: absolute !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    z-index: 100 !important;
+    pointer-events: none;
+    color: black;
+    text-shadow: 1px 1px 1px white;
+}
 
-        .fab {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #2196f3;
-            color: white;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 56px;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-        }
 
-        .fab-menu {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            display: none;
-            flex-direction: column;
-            align-items: flex-end;
-            z-index: 1000;
-        }
 
-        .fab-item {
-            background-color: #1e88e5;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            text-align: center;
-            margin-bottom: 10px;
-            cursor: pointer;
-            position: relative;
-        }
+/* Diagonal Icon Positioning */
+.cell.diagonal-ne i {
+    top: 25% !important;     /* Top right corner */
+    left: 75% !important;
+}
+.cell.diagonal-se i {
+    top: 75% !important;     /* Bottom right corner - Fixed from 25% to 75% */
+    left: 75% !important;
+}
+.cell.diagonal-sw i {
+    top: 75% !important;     /* Bottom left corner */
+    left: 25% !important;
+}
+.cell.diagonal-nw i {
+    top: 25% !important;     /* Top left corner */
+    left: 25% !important;
+}
+.cell.diagonal-ne i,
+.cell.diagonal-se i,
+.cell.diagonal-sw i,
+.cell.diagonal-nw i {
+    font-size: 16px !important;
+    z-index: 100 !important;
+}
 
-        .fab-item.red {
-            background-color: #e53935;
-        }
+/* Diagonal Icon Base Styles */
+.cell.diagonal-ne i,
+.cell.diagonal-se i,
+.cell.diagonal-sw i,
+.cell.diagonal-nw i {
+    position: absolute !important;
+    transform: translate(-50%, -50%) !important;
+    font-size: 16px !important;
+    z-index: 100 !important;
+    pointer-events: none !important;
+    color: black !important;
+    text-shadow: 1px 1px 1px white !important;
+}
 
-        .fab-item.yellow {
-            background-color: #ffc107;
-        }
+/* Specific Positioning for Each Diagonal Direction */
+.cell.diagonal-ne i {
+    top: 75% !important;
+    left: 75% !important;
+}
 
-        .fab-submenu {
-            display: none;
-            margin-right: 10px;
-        }
+.cell.diagonal-se i {
+    top: 25% !important;
+    left: 75% !important;
+}
 
-        .fab-item i {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-        }
+.cell.diagonal-sw i {
+    top: 25% !important;
+    left: 25% !important;
+}
 
-        #startMenu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            z-index: 2000;
-        }
+.cell.diagonal-nw i {
+    top: 75% !important;
+    left: 25% !important;
+}
 
-        #startMenu button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 18px;
-            cursor: pointer;
-        }
 
-        .secret-element .secret-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
 
-        .secret-element .secret-container::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.7);
-            z-index: 1;
-        }
+/* Ensure RPG Awesome icons appear */
+.cell.diagonal-ne i.ra,
+.cell.diagonal-se i.ra,
+.cell.diagonal-sw i.ra,
+.cell.diagonal-nw i.ra {
+    font-size: 16px !important;
+    z-index: 100 !important;
+}
 
-        .secret-element .secret-container i {
-            position: relative;
-            z-index: 2;
-        }
+/* Ensure Material icons appear */
+.cell.diagonal-ne i.material-icons,
+.cell.diagonal-se i.material-icons,
+.cell.diagonal-sw i.material-icons,
+.cell.diagonal-nw i.material-icons {
+    font-size: 16px !important;
+    z-index: 100 !important;
+}
 
-        .secret-element.revealed .secret-container::after {
-            display: none;
-        }
+/* Secret Container in Diagonal Cells */
+.cell.diagonal-ne .secret-container,
+.cell.diagonal-se .secret-container,
+.cell.diagonal-sw .secret-container,
+.cell.diagonal-nw .secret-container {
+    z-index: 100 !important;
+}
 
-        .secret-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-        }
+.cell.diagonal-ne .secret-container i,
+.cell.diagonal-se .secret-container i,
+.cell.diagonal-sw .secret-container i,
+.cell.diagonal-nw .secret-container i {
+    z-index: 101 !important;
+}
 
-        .legend {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            z-index: 1000;
-            max-width: 200px;
-            display: none;
-        }
+/* Secret Container Styles */
+.secret-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
 
-        .legend h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
+.secret-element .secret-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
 
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
+.secret-element .secret-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 1;
+}
 
-        .legend-icon {
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+.secret-element .secret-container i {
+    position: relative;
+    z-index: 102;
+}
 
-        .legend-text {
-            font-size: 14px;
-        }
+.secret-element.revealed .secret-container::after {
+    display: none;
+}
 
-        #toggleLegend {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 1001;
-            background-color: #2196f3;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+/* FAB Menu Styles */
+/* FAB Menu Styles */
+.fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #2196f3;
+    color: white;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 56px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
 
-        .coordinate-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            color: #333;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            overflow: hidden;
-            white-space: nowrap;
-        }
+.fab-menu {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    display: none;
+    flex-direction: column;
+    align-items: flex-end;
+    z-index: 1000;
+}
 
-        .grid-label {
-            position: absolute;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(255, 255, 255, 0.7);
-        }
+.fab-item {
+    background-color: #1e88e5;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    text-align: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        .cell.diagonal-se {
-            background: linear-gradient(to bottom right,
-                    #ffffff 49%,
-                    #000000 49% 51%,
-                    #87cefa 51%);
-            border: 1px solid #ccc !important;
-        }
+.fab-item i {
+    font-size: 24px !important; /* Increased from previous size */
+    position: relative !important; /* Changed from absolute */
+    transform: none !important; /* Remove transform that might affect size */
+    top: auto !important;
+    left: auto !important;
+}
 
-        .cell.diagonal-sw {
-            background: linear-gradient(to bottom left,
-                    #ffffff 49%,
-                    #000000 49% 51%,
-                    #87cefa 51%);
-            border: 1px solid #ccc !important;
-        }
+.fab-item i.ra {
+    font-size: 20px !important; /* RPG Awesome icons might need slightly different size */
+}
 
-        .cell.diagonal-ne {
-            background: linear-gradient(to top right,
-                    #ffffff 49%,
-                    #000000 49% 51%,
-                    #87cefa 51%);
-            border: 1px solid #ccc !important;
-        }
+.fab-item.red { background-color: #e53935; }
+.fab-item.yellow { background-color: #ffc107; }
 
-        .cell.diagonal-nw {
-            background: linear-gradient(to top left,
-                    #ffffff 49%,
-                    #000000 49% 51%,
-                    #87cefa 51%);
-            border: 1px solid #ccc !important;
-        }
+.fab-submenu {
+    display: none;
+    margin-right: 10px;
+}
 
-        .cell.diagonal-ne::before,
-        .cell.diagonal-se::before,
-        .cell.diagonal-sw::before,
-        .cell.diagonal-nw::before {
-            border: none !important;
-        }
+.diagonal-rotate-fab {
+    position: fixed;
+    bottom: 20px;
+    right: 90px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #1e88e5;
+    color: white;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+}
 
-        .cell.filled.connected-left::before {
-            border-left: none !important;
-        }
+.diagonal-rotate-fab i {
+    font-size: 24px !important;
+    position: relative !important;
+    transform: none !important;
+}
 
-        .cell.filled.connected-right::before {
-            border-right: none !important;
-        }
+.diagonal-rotate-fab.active {
+    background-color: #4caf50;
+}
 
-        .cell.filled.connected-top::before {
-            border-top: none !important;
-        }
+/* Rotating Fab elements */
+/* Add this to your CSS */
+.elements-rotate-fab {
+    position: fixed;
+    bottom: 20px;
+    right: 160px; /* Position it to the left of the diagonal FAB */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #1e88e5;
+    color: white;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+}
 
-        .cell.filled.connected-bottom::before {
-            border-bottom: none !important;
-        }
+.elements-rotate-fab i {
+    font-size: 20px;
+}
 
-        .diagonal-rotate-fab {
-            position: fixed;
-            bottom: 20px;
-            right: 90px;
-            /* Position it to the left of the main FAB */
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #1e88e5;
-            color: white;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            transition: background-color 0.3s ease;
-        }
+.elements-rotate-fab.active {
+    background-color: #4caf50;
+}
 
-        .diagonal-rotate-fab i {
-            font-size: 20px;
-        }
+/* Grid Labels and Coordinates */
+.grid-label {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.7);
+}
 
-        .diagonal-rotate-fab.active {
-            background-color: #4caf50;
-        }
+.coordinate-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    overflow: hidden;
+    white-space: nowrap;
+}
 
-        .cell.diagonal-ne {
-            background: linear-gradient(to top right,
-                    #ffffff 49%,
-                    #000000 49% 51%,
-                    #87cefa 51%);
-            border: 1px solid #ccc !important;
-        }
+/* Legend Styles */
+.legend {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    z-index: 1000;
+    max-width: 200px;
+    display: none;
+}
 
-        .cell.diagonal-se {
-            background: linear-gradient(to bottom right,
-                    #ffffff 49%,
-                    #000000 49% 51%,
-                    #87cefa 51%);
-            border: 1px solid #ccc !important;
-        }
+.legend h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
 
-        .cell.diagonal-sw {
-            background: linear-gradient(to bottom left,
-                    #ffffff 49%,
-                    #000000 49% 51%,
-                    #87cefa 51%);
-            border: 1px solid #ccc !important;
-        }
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
 
-        .cell.diagonal-nw {
-            background: linear-gradient(to top left,
-                    #ffffff 49%,
-                    #000000 49% 51%,
-                    #87cefa 51%);
-            border: 1px solid #ccc !important;
-        }
+.legend-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        .cell.diagonal-ne i,
-        .cell.diagonal-se i,
-        .cell.diagonal-sw i,
-        .cell.diagonal-nw i {
-            position: absolute;
-            transform: translate(-50%, -50%);
-            font-size: 16px;
-            z-index: 20 !important;
-            /* Ensure icon is above the diagonal */
-            pointer-events: none;
-            color: black;
-            /* Make sure icon is visible */
-            text-shadow: 1px 1px 1px white;
-            /* Optional: add contrast */
-        }
+.legend-text {
+    font-size: 14px;
+}
 
-        .cell.diagonal-ne .secret-container i,
-        .cell.diagonal-se .secret-container i,
-        .cell.diagonal-sw .secret-container i,
-        .cell.diagonal-nw .secret-container i {
-            font-size: 16px;
-        }
+#toggleLegend {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Start Menu */
+#startMenu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 2000;
+}
+
+#startMenu button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+}
     </style>
 </head>
 
@@ -543,16 +581,19 @@
 
         let diagonalDirections = ['NE', 'SE', 'SW', 'NW']
         let currentDiagonalIndex = 0
+        let elementTypes = ['door', 'secretdoor', 'enemy', 'stairs', 'trap', 'npc', 'treasure'];
+let currentElementIndex = 0;
+let isElementModeActive = false;
 
-        const iconMap = {
-            door: { ra: 'ra-wooden-door', material: 'door_front' },
-            secretdoor: { ra: 'ra-secret-door', material: 'door_sliding' },
-            enemy: { ra: 'ra-dragon', material: 'pest_control' },
-            stairs: { ra: 'ra-tower', material: 'stairs' },
-            trap: { ra: 'ra-spikes-full', material: 'warning' },
-            npc: { ra: 'ra-player', material: 'person' },
-            treasure: { ra: 'ra-treasure-map', material: 'attach_money' }
-        }
+const iconMap = {
+    'door': { ra: 'ra-wooden-door', material: 'door_front' },
+    'secretdoor': { ra: 'ra-secret-door', material: 'door_sliding' },
+    'enemy': { ra: 'ra-dragon', material: 'pest_control' },
+    'stairs': { ra: 'ra-tower', material: 'stairs' },
+    'trap': { ra: 'ra-spikes-full', material: 'warning' },
+    'npc': { ra: 'ra-player', material: 'person' },
+    'treasure': { ra: 'ra-treasure-map', material: 'attach_money' }
+};
         const legendItems = [
             { type: 'door', label: 'Door' },
             { type: 'secretdoor', label: 'Secret Door' },
@@ -853,77 +894,68 @@
         }
 
         function toggleDiagonalPath(cell, row, col, direction) {
-            console.log('Toggling diagonal path:', { row, col, direction })
+    console.log('Toggling diagonal path:', { row, col, direction });
+    
+    // Convert direction (e.g., "diagonalPathSE") to class name (e.g., "diagonal-se")
+    const directionSuffix = direction.replace('diagonalPath', '').toLowerCase();
+    const diagonalClass = `diagonal-${directionSuffix}`;
+    
+    console.log('Using diagonal class:', diagonalClass);
 
-            // Convert direction (e.g., "diagonalPathSE") to class name (e.g., "diagonal-se")
-            const directionSuffix = direction
-                .replace('diagonalPath', '')
-                .toLowerCase()
-            const diagonalClass = `diagonal-${directionSuffix}`
+    // Store original position
+    const originalLeft = cell.style.left;
+    const originalTop = cell.style.top;
 
-            console.log('Using diagonal class:', diagonalClass)
-
-            if (cell.classList.contains(diagonalClass)) {
-                // Remove diagonal path completely
-                console.log('Removing diagonal path')
-                cell.classList.remove(
-                    'diagonal-ne',
-                    'diagonal-se',
-                    'diagonal-sw',
-                    'diagonal-nw',
-                    'filled'
-                )
-                cell.classList.remove(
-                    'connected-left',
-                    'connected-right',
-                    'connected-top',
-                    'connected-bottom'
-                )
-                cell.style.background = '' // Reset the background
-                mapData[row][col] = null
-
-                // Remove any icons
-                const existingIcon = cell.querySelector('i')
-                if (existingIcon) {
-                    existingIcon.remove()
-                }
-            } else {
-                // Preserve any existing icon
-                const existingIcon = cell.querySelector('i')
-                const iconHtml = existingIcon ? existingIcon.outerHTML : ''
-
-                // Clear existing content and classes
-                cell.innerHTML = ''
-                cell.className = 'cell'
-
-                // Add diagonal path
-                cell.classList.add(diagonalClass)
-                // Don't override the gradient background
-                cell.style.background = '' // Remove any inline background style
-                mapData[row][col] = direction
-
-                // Restore icon if it existed
-                if (iconHtml) {
-                    cell.insertAdjacentHTML('beforeend', iconHtml)
-                }
-            }
-
-            // Log the final state of the cell
-            console.log('Final cell state:', {
-                classList: cell.className,
-                backgroundStyle: cell.style.background,
-                mapData: mapData[row][col]
-            })
-
-            // Update borders for this cell and neighbors
-            updateBorders(cell, row, col)
-            if (col > 0) updateBorders(getCell(row, col - 1), row, col - 1)
-            if (col < gridSize - 1)
-                updateBorders(getCell(row, col + 1), row, col + 1)
-            if (row > 0) updateBorders(getCell(row - 1, col), row - 1, col)
-            if (row < gridSize - 1)
-                updateBorders(getCell(row + 1, col), row + 1, col)
+    if (cell.classList.contains(diagonalClass)) {
+        // Remove diagonal path completely
+        console.log('Removing diagonal path');
+        cell.classList.remove('diagonal-ne', 'diagonal-se', 'diagonal-sw', 'diagonal-nw', 'filled');
+        cell.classList.remove('connected-left', 'connected-right', 'connected-top', 'connected-bottom');
+        cell.style.background = '';
+        mapData[row][col] = null;
+        
+        // Remove any icons
+        const existingIcon = cell.querySelector('i');
+        if (existingIcon) {
+            existingIcon.remove();
         }
+    } else {
+        // Preserve any existing icon
+        const existingIcon = cell.querySelector('i');
+        const iconHtml = existingIcon ? existingIcon.outerHTML : '';
+        
+        // Clear existing content and classes but maintain cell position
+        cell.innerHTML = '';
+        cell.className = 'cell';
+        
+        // Add diagonal path
+        cell.classList.add(diagonalClass);
+        mapData[row][col] = direction;
+        
+        // Restore icon if it existed
+        if (iconHtml) {
+            cell.insertAdjacentHTML('beforeend', iconHtml);
+        }
+    }
+
+    // Ensure position is maintained
+    cell.style.left = originalLeft;
+    cell.style.top = originalTop;
+
+    // Log the final state of the cell
+    console.log('Final cell state:', {
+        classList: cell.className,
+        position: { left: cell.style.left, top: cell.style.top },
+        mapData: mapData[row][col]
+    });
+
+    // Update borders for this cell and neighbors
+    updateBorders(cell, row, col);
+    if (col > 0) updateBorders(getCell(row, col - 1), row, col - 1);
+    if (col < gridSize - 1) updateBorders(getCell(row, col + 1), row, col + 1);
+    if (row > 0) updateBorders(getCell(row - 1, col), row - 1, col);
+    if (row < gridSize - 1) updateBorders(getCell(row + 1, col), row + 1, col);
+}
 
         // Updated updateBorders function for diagonal handling
         function updateBorders(cell, row, col) {
@@ -1069,61 +1101,155 @@
             return window.getComputedStyle(element).zIndex
         }
 
-        async function addMapElement(cell, row, col, mode) {
-            console.log('addMapElement called with:', { mode, row, col })
-            if (cell.classList.contains('filled')) {
-                console.log('Cell is filled, proceeding with icon placement')
+    //     async function addMapElement(cell, row, col, mode) {
+    //         console.log('addMapElement called with:', { mode, row, col })
+    //         if (cell.classList.contains('filled')) {
+    //             console.log('Cell is filled, proceeding with icon placement')
 
-                // Remove any existing icons
-                const existingIcon = cell.querySelector('i')
-                if (existingIcon) {
-                    existingIcon.remove()
-                    console.log('Removed existing icon')
-                }
+    //             // Remove any existing icons
+    //             const existingIcon = cell.querySelector('i')
+    //             if (existingIcon) {
+    //                 existingIcon.remove()
+    //                 console.log('Removed existing icon')
+    //             }
 
-                const icons = getIconClass(mode)
-                console.log('Icon class for mode:', icons)
-                const isRpgIconAvailable = await checkIconAvailability(icons.ra)
-                console.log('RPG icon available:', isRpgIconAvailable)
+    //             const icons = getIconClass(mode)
+    //             console.log('Icon class for mode:', icons)
+    //             const isRpgIconAvailable = await checkIconAvailability(icons.ra)
+    //             console.log('RPG icon available:', isRpgIconAvailable)
 
-                const iconElement = document.createElement('i')
-                iconElement.style.zIndex = '10'
+    //             const iconElement = document.createElement('i')
+    //             iconElement.style.zIndex = '10'
 
-                // Check if this is a diagonal cell
-                const isDiagonal =
-                    cell.classList.contains('diagonal-ne') ||
-                    cell.classList.contains('diagonal-se') ||
-                    cell.classList.contains('diagonal-sw') ||
-                    cell.classList.contains('diagonal-nw')
+    //             // Check if this is a diagonal cell
+    //             const isDiagonal = cell.classList.contains('diagonal-ne') || 
+    //                   cell.classList.contains('diagonal-se') || 
+    //                   cell.classList.contains('diagonal-sw') || 
+    //                   cell.classList.contains('diagonal-nw');
 
-                if (isRpgIconAvailable) {
-                    iconElement.className = `ra ${icons.ra}`
-                    console.log('Using RPG icon:', icons.ra)
-                } else {
-                    iconElement.className = 'material-icons'
-                    iconElement.textContent = icons.material
-                    console.log('Using material icon:', icons.material)
-                }
+    // const isFilled = cell.classList.contains('filled');
 
-                console.log('Created icon element:', iconElement)
+    
 
-                if (mode === 'secretdoor' || mode === 'trap') {
-                    cell.classList.add('secret-element')
-                    const secretContainer = document.createElement('div')
-                    secretContainer.className = 'secret-container'
-                    secretContainer.appendChild(iconElement)
-                    cell.appendChild(secretContainer)
-                    console.log('Added as secret element')
-                } else {
-                    cell.appendChild(iconElement)
-                    console.log('Added as regular element')
-                }
+    //             if (isRpgIconAvailable) {
+    //                 iconElement.className = `ra ${icons.ra}`
+    //                 console.log('Using RPG icon:', icons.ra)
+    //             } else {
+    //                 iconElement.className = 'material-icons'
+    //                 iconElement.textContent = icons.material
+    //                 console.log('Using material icon:', icons.material)
+    //             }
 
-                console.log('Icon added to cell. Cell contents:', cell.innerHTML)
-                mapData[row][col] = mode
-                updateBorders(cell, row, col)
-            }
+    //             console.log('Created icon element:', iconElement)
+
+    //             if (mode === 'secretdoor' || mode === 'trap') {
+    //                 cell.classList.add('secret-element')
+    //                 const secretContainer = document.createElement('div')
+    //                 secretContainer.className = 'secret-container'
+    //                 secretContainer.appendChild(iconElement)
+    //                 cell.appendChild(secretContainer)
+    //                 console.log('Added as secret element')
+    //             } else {
+    //                 cell.appendChild(iconElement)
+    //                 console.log('Added as regular element')
+    //             }
+
+    //             console.log('Icon added to cell. Cell contents:', cell.innerHTML)
+    //             mapData[row][col] = mode
+    //             updateBorders(cell, row, col)
+    //         }
+    //     }
+
+    async function addMapElement(cell, row, col, mode) {
+    console.log('addMapElement called with:', { mode, row, col });
+    
+    // Check if cell is filled or diagonal
+    const isDiagonal = cell.classList.contains('diagonal-ne') || 
+                      cell.classList.contains('diagonal-se') || 
+                      cell.classList.contains('diagonal-sw') || 
+                      cell.classList.contains('diagonal-nw');
+    
+    const isFilled = cell.classList.contains('filled');
+    
+    if (isFilled || isDiagonal) {
+        console.log('Cell is valid for icon placement');
+        
+        // Remove any existing icons
+        const existingIcon = cell.querySelector('i');
+        if (existingIcon) {
+            existingIcon.remove();
+            console.log('Removed existing icon');
         }
+
+        const icons = getIconClass(mode);
+        console.log('Icon class for mode:', icons);
+        const isRpgIconAvailable = await checkIconAvailability(icons.ra);
+        console.log('RPG icon available:', isRpgIconAvailable);
+
+        const iconElement = document.createElement('i');
+        iconElement.style.zIndex = '100'; // Increased z-index for visibility
+        
+        if (isRpgIconAvailable) {
+            iconElement.className = `ra ${icons.ra}`;
+            console.log('Using RPG icon:', icons.ra);
+        } else {
+            iconElement.className = 'material-icons';
+            iconElement.textContent = icons.material;
+            console.log('Using material icon:', icons.material);
+        }
+
+        // Add specific styles for diagonal cells
+        if (isDiagonal) {
+            // Set position based on diagonal direction
+            if (cell.classList.contains('diagonal-ne')) {
+                iconElement.style.top = '25%';    // Top right corner
+                iconElement.style.left = '75%';
+            } else if (cell.classList.contains('diagonal-se')) {
+                iconElement.style.top = '75%';    // Bottom right corner
+                iconElement.style.left = '75%';
+            } else if (cell.classList.contains('diagonal-sw')) {
+                iconElement.style.top = '75%';    // Bottom left corner
+                iconElement.style.left = '25%';
+            } else if (cell.classList.contains('diagonal-nw')) {
+                iconElement.style.top = '25%';    // Top left corner
+                iconElement.style.left = '25%';
+            }
+            iconElement.style.fontSize = '16px';
+        }
+
+
+
+        console.log('Created icon element:', iconElement);
+
+        if (mode === 'secretdoor' || mode === 'trap') {
+            cell.classList.add('secret-element');
+            const secretContainer = document.createElement('div');
+            secretContainer.className = 'secret-container';
+            secretContainer.style.zIndex = '100';
+            secretContainer.appendChild(iconElement);
+            cell.appendChild(secretContainer);
+            console.log('Added as secret element');
+            
+            // Add click event to toggle reveal for secret elements
+            cell.addEventListener('click', (e) => {
+                e.stopPropagation();
+                cell.classList.toggle('revealed');
+            });
+        } else {
+            cell.appendChild(iconElement);
+            console.log('Added as regular element');
+        }
+
+        console.log('Icon added to cell. Final cell state:', {
+            classList: cell.className,
+            iconElement: iconElement.outerHTML,
+            cellContents: cell.innerHTML
+        });
+        
+        mapData[row][col] = mode;
+        updateBorders(cell, row, col);
+    }
+}
 
         // FAB Menu Functions
         async function createFabMenu() {
@@ -1231,6 +1357,59 @@
             console.log('Diagonal direction changed to:', activeDiagonalDirection)
         }
 
+        function createElementsRotateFab() {
+    // Remove any existing elements FAB first
+    const existingFab = document.getElementById('elementsRotateFab');
+    if (existingFab) {
+        existingFab.remove();
+    }
+
+    const rotateFab = document.createElement('div');
+    rotateFab.className = 'elements-rotate-fab';
+    rotateFab.id = 'elementsRotateFab';
+    
+    const icon = document.createElement('i');
+    icon.className = 'material-icons';
+    icon.textContent = 'door_front'; // Initial icon
+    
+    rotateFab.appendChild(icon);
+    document.body.appendChild(rotateFab);
+    
+    return rotateFab;
+}
+
+// Add function to cycle through elements
+async function cycleElementType(e) {
+    if (e) e.stopPropagation();
+    
+    currentElementIndex = (currentElementIndex + 1) % elementTypes.length;
+    const elementType = elementTypes[currentElementIndex];
+    currentMode = elementType;
+    
+    const icon = document.querySelector('#elementsRotateFab i');
+    if (icon) {
+        // Get the icon info for the current element type
+        const icons = getIconClass(elementType);
+        console.log('Icon class for element:', icons);
+        
+        // Check RPG Awesome icon availability
+        const isRpgIconAvailable = await checkIconAvailability(icons.ra);
+        console.log('RPG icon available:', isRpgIconAvailable);
+
+        if (isRpgIconAvailable) {
+            icon.className = `ra ${icons.ra}`;
+            icon.textContent = '';
+            console.log('Using RPG icon:', icons.ra);
+        } else {
+            icon.className = 'material-icons';
+            icon.textContent = icons.material;
+            console.log('Using material icon:', icons.material);
+        }
+    }
+    
+    console.log('Element type changed to:', currentMode);
+}
+
         async function createLegend() {
             const legendContent = document.getElementById('legendContent')
             legendContent.innerHTML = '' // Clear existing content
@@ -1291,10 +1470,15 @@
             const fabMenuItems = document.querySelectorAll('.fab-item')
 
             // Ensure diagonal FAB exists
-            let diagonalRotateFab = document.getElementById('diagonalRotateFab')
-            if (!diagonalRotateFab) {
-                diagonalRotateFab = createDiagonalRotateFab()
-            }
+            let diagonalRotateFab = document.getElementById('diagonalRotateFab');
+    let elementsRotateFab = document.getElementById('elementsRotateFab');
+    
+    if (!diagonalRotateFab) {
+        diagonalRotateFab = createDiagonalRotateFab();
+    }
+    if (!elementsRotateFab) {
+        elementsRotateFab = createElementsRotateFab();
+    }
 
             // Main FAB button click
             fabBtn.addEventListener('click', () => {
@@ -1334,22 +1518,20 @@
                     console.log('FAB menu item clicked:', mode)
 
                     if (mode === 'mapElements') {
-                        // Handle mapElements submenu
-                        const submenu = document.getElementById('mapElementsSubmenu')
-                        if (submenu) {
-                            submenu.style.display =
-                                submenu.style.display === 'none' ? 'flex' : 'none'
-
-                            // Hide other submenus but keep main menu visible
-                            document.querySelectorAll('.fab-submenu').forEach(sub => {
-                                if (sub.id !== 'mapElementsSubmenu') {
-                                    sub.style.display = 'none'
-                                }
-                            })
-                            // Don't hide the main menu here
-                            return // Exit early to prevent hiding main menu
-                        }
-                    } else if (mode === 'diagonalPath') {
+                isElementModeActive = !isElementModeActive;
+                
+                if (isElementModeActive) {
+                    elementsRotateFab.style.display = 'flex';
+                    currentElementIndex = 0;
+                    currentMode = elementTypes[0];
+                    e.currentTarget.style.backgroundColor = '#4CAF50';
+                } else {
+                    elementsRotateFab.style.display = 'none';
+                    e.currentTarget.style.backgroundColor = '#1E88E5';
+                    currentMode = 'fill';
+                }
+                fabMenu.style.display = 'none';
+            } else if (mode === 'diagonalPath') {
                         // Rest of diagonal handling remains the same
                         isDiagonalModeActive = !isDiagonalModeActive
 
@@ -1402,6 +1584,7 @@
 
             // Add click handler to diagonal rotate FAB
             diagonalRotateFab.addEventListener('click', cycleDiagonalDirection)
+            elementsRotateFab.addEventListener('click', cycleElementType);
 
             // Close menus when clicking outside
             document.addEventListener('click', e => {
@@ -1777,11 +1960,18 @@
         window.addEventListener('resize', createGrid)
 
         // Initialization
+        // async function initializeApp() {
+        //     await createFabMenu()
+        //     setupEventListeners()
+        //     setupLegend()
+        // }
         async function initializeApp() {
-            await createFabMenu()
-            setupEventListeners()
-            setupLegend()
-        }
+    await createFabMenu();
+    createDiagonalRotateFab();
+    createElementsRotateFab();
+    setupEventListeners();
+    setupLegend();
+}
 
         // Call this function when the document is ready
         document.addEventListener('DOMContentLoaded', () => {
