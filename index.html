@@ -351,59 +351,44 @@ body {
 }
 
 /* Legend Styles */
+/* Update your legend styles */
 .legend {
     position: fixed;
-    top: 20px;
-    left: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    z-index: 1000;
-    max-width: 200px;
-    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 300px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 2500; /* Higher than other elements */
+    display: none; /* Initial state */
 }
 
-.legend h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
+.legend-section {
+    margin-bottom: 15px;
 }
 
-.legend-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
+.legend-section h4 {
+    margin: 0 0 8px 0;
+    color: #2196f3;
+    font-size: 16px;
 }
 
-.legend-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.legend-section ul {
+    margin: 0;
+    padding-left: 20px;
 }
 
-.legend-text {
+.legend-section li {
+    margin: 5px 0;
     font-size: 14px;
+    line-height: 1.4;
 }
 
-#toggleLegend {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1001;
+.fab-item.blue {
     background-color: #2196f3;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* Start Menu */
@@ -488,6 +473,26 @@ body {
     outline: none;
     border-color: #2196f3;
 }
+
+.notes-display {
+    width: 100%;
+    height: 100%;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+.notes-display:focus {
+    outline: none;
+    border-color: #2196f3;
+}
+
 /* Reference dot indicator */
 .cell .reference-dot {
     position: absolute;
@@ -499,6 +504,28 @@ body {
     border-radius: 50%;
     z-index: 150;
     display: none;
+}
+.reference-dot {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    z-index: 150;
+    display: none;
+    box-shadow: 0 0 2px rgba(0,0,0,0.5); /* Makes dots more visible */
+}
+
+/* Style for the color cycle button */
+#cycleColor {
+    transition: background-color 0.3s ease;
+}
+
+/* Style for colored coordinates in textarea */
+.notes-textarea span {
+    display: inline;
+    padding: 0 2px;
 }
 
 /* Quick actions bar in notes */
@@ -552,7 +579,7 @@ body {
     <div class="fab" id="fabBtn">+</div>
     <div class="fab-menu" id="fabMenu"></div>
 
-    <div id="legend" class="legend">
+    <div id="legend" class="legend" style="display: none;">
         <h3>Map Legend</h3>
         <div id="legendContent"></div>
     </div>
@@ -592,51 +619,26 @@ let referencedCells = new Set();
 
         // FAB Menu Configuration
         const menuItems = [
-            {
-                id: 'mapElements',
-                icon: { ra: 'ra-castle-flag', material: 'map' },
-                submenu: [
-                    {
-                        id: 'addDoor',
-                        icon: { ra: 'ra-wooden-door', material: 'door_front' }
-                    },
-                    {
-                        id: 'addSecretDoor',
-                        icon: { ra: 'ra-secret-door', material: 'door_sliding' }
-                    },
-                    {
-                        id: 'markEnemy',
-                        icon: { ra: 'ra-dragon', material: 'pest_control' }
-                    },
-                    { id: 'markStairs', icon: { ra: 'ra-tower', material: 'stairs' } },
-                    {
-                        id: 'addTrap',
-                        icon: { ra: 'ra-spikes-full', material: 'warning' }
-                    },
-                    { id: 'addNpc', icon: { ra: 'ra-player', material: 'person' } },
-                    {
-                        id: 'addTreasure',
-                        icon: { ra: 'ra-treasure-map', material: 'attach_money' }
-                    }
-                ]
-            },
-            { id: 'diagonalPath', icon: { material: 'call_split' } },
-            {
-                id: 'eraser',
-                icon: { ra: 'ra-eraser', material: 'auto_fix_high' },
-                class: 'yellow'
-            },
-            {
-                id: 'saveMap',
-                icon: { ra: 'ra-save', material: 'save' },
-                class: 'red'
-            },
-            {
-                id: 'loadMap',
-                icon: { ra: 'ra-folder', material: 'folder_open' },
-                class: 'red'
-            }
-        ]
+    { id: 'mapElements', icon: { ra: 'ra-castle-flag', material: 'map' }, submenu: [
+        { id: 'addDoor', icon: { ra: 'ra-wooden-door', material: 'door_front' } },
+        { id: 'addSecretDoor', icon: { ra: 'ra-secret-door', material: 'door_sliding' } },
+        { id: 'markEnemy', icon: { ra: 'ra-dragon', material: 'pest_control' } },
+        { id: 'markStairs', icon: { ra: 'ra-tower', material: 'stairs' } },
+        { id: 'addTrap', icon: { ra: 'ra-spikes-full', material: 'warning' } },
+        { id: 'addNpc', icon: { ra: 'ra-player', material: 'person' } },
+        { id: 'addTreasure', icon: { ra: 'ra-treasure-map', material: 'attach_money' } }
+    ]},
+    { id: 'diagonalPath', icon: { material: 'call_split' }, submenu: [
+        { id: 'diagonalPathNE', icon: { material: 'north_east' } },
+        { id: 'diagonalPathSE', icon: { material: 'south_east' } },
+        { id: 'diagonalPathSW', icon: { material: 'south_west' } },
+        { id: 'diagonalPathNW', icon: { material: 'north_west' } }
+    ]},
+    { id: 'eraser', icon: { ra: 'ra-eraser', material: 'auto_fix_high' }, class: 'yellow' },
+    { id: 'toggleLegend', icon: { material: 'help_outline' }, class: 'blue' },
+    { id: 'saveMap', icon: { ra: 'ra-save', material: 'save' }, class: 'red' },
+    { id: 'loadMap', icon: { ra: 'ra-folder', material: 'folder_open' }, class: 'red' }
+];
 
         let diagonalDirections = ['NE', 'SE', 'SW', 'NW']
         let currentDiagonalIndex = 0
@@ -661,17 +663,85 @@ let referencedCells = new Set();
             npc: { ra: 'ra-player', material: 'person' },
             treasure: { ra: 'ra-treasure-map', material: 'attach_money' }
         }
-        const legendItems = [
-            { type: 'door', label: 'Door' },
-            { type: 'secretdoor', label: 'Secret Door' },
-            { type: 'enemy', label: 'Enemy' },
-            { type: 'stairs', label: 'Stairs' },
-            { type: 'trap', label: 'Trap' },
-            { type: 'npc', label: 'NPC' },
-            { type: 'treasure', label: 'Treasure' }
-        ]
+        // const legendItems = [
+        //     { type: 'door', label: 'Door' },
+        //     { type: 'secretdoor', label: 'Secret Door' },
+        //     { type: 'enemy', label: 'Enemy' },
+        //     { type: 'stairs', label: 'Stairs' },
+        //     { type: 'trap', label: 'Trap' },
+        //     { type: 'npc', label: 'NPC' },
+        //     { type: 'treasure', label: 'Treasure' }
+        // ]
+        const dotColors = [
+    '#FF0000', // Red
+    '#00FF00', // Green
+    '#0000FF', // Blue
+    '#FFA500', // Orange
+    '#800080', // Purple
+    '#FFC0CB', // Pink
+    '#FFD700', // Gold
+    '#00FFFF', // Cyan
+    '#FF00FF', // Magenta
+    '#008000', // Dark Green
+    '#800000', // Maroon
+    '#000080'  // Navy
+];
+let currentColorIndex = 0;
 
-        function createNotesOverlay() {
+        const legendContent = `
+<div class="legend-section">
+    <h4>Basic Controls</h4>
+    <ul>
+        <li>Click squares to fill them</li>
+        <li>Drag to pan the map</li>
+        <li>Mouse wheel to zoom</li>
+        <li>Use eraser to remove elements</li>
+    </ul>
+</div>
+
+<div class="legend-section">
+    <h4>Map Elements</h4>
+    <ul>
+        <li>Click Map Elements (🏰) to show placement menu</li>
+        <li>Select element type to place</li>
+        <li>Click again on Map Elements to exit placement mode</li>
+        <li>Quick select: Use the rotating element button when active</li>
+    </ul>
+</div>
+
+<div class="legend-section">
+    <h4>Diagonal Walls</h4>
+    <ul>
+        <li>Click Diagonal (↗) to enter diagonal mode</li>
+        <li>Use the rotating button to change direction</li>
+        <li>Click again on Diagonal to exit</li>
+    </ul>
+</div>
+
+<div class="legend-section">
+    <h4>Special Features</h4>
+    <ul>
+        <li>Secret doors/traps are hidden until clicked</li>
+        <li>Click Save (💾) to download your map</li>
+        <li>Click Load (📁) to restore a saved map</li>
+    </ul>
+</div>
+`;
+
+function cycleColor() {
+    currentColorIndex = (currentColorIndex + 1) % dotColors.length;
+    updateColorButton();
+    return dotColors[currentColorIndex];
+}
+
+// Add this function to update the color button appearance
+function updateColorButton() {
+    const colorBtn = document.querySelector('#cycleColor');
+    if (colorBtn) {
+        colorBtn.style.backgroundColor = dotColors[currentColorIndex];
+    }
+}
+function createNotesOverlay() {
     const overlay = document.createElement('div');
     overlay.className = 'notes-overlay';
     overlay.innerHTML = `
@@ -687,28 +757,29 @@ let referencedCells = new Set();
             <button class="quick-action-btn" id="insertTimestamp">
                 <i class="material-icons">access_time</i>Time
             </button>
+            <button class="quick-action-btn" id="cycleColor" style="background-color: ${dotColors[0]}">
+                <i class="material-icons">color_lens</i>Color
+            </button>
             <button class="quick-action-btn" id="clearDots">
-                <i class="material-icons">clear_all</i>Clear Dots
+                <i class="material-icons">clear_all</i>Clear
             </button>
         </div>
         <div class="notes-content">
-            <textarea class="notes-textarea" placeholder="Click any cell to insert its coordinates. Add your notes here...">${notes}</textarea>
+            <div class="notes-display" contenteditable="true">${notes}</div>
         </div>
     `;
     document.body.appendChild(overlay);
 
-    // Set up existing event listeners
     setupNotesEventListeners(overlay);
-    
     return overlay;
 }
 
 function setupNotesEventListeners(overlay) {
     const header = overlay.querySelector('.notes-header');
     const closeBtn = overlay.querySelector('#closeNotes');
-    const textarea = overlay.querySelector('.notes-textarea');
     const insertTimeBtn = overlay.querySelector('#insertTimestamp');
     const clearDotsBtn = overlay.querySelector('#clearDots');
+    const displayDiv = overlay.querySelector('.notes-display');  // Get existing displayDiv instead of creating new one
 
     header.addEventListener('mousedown', startDraggingNotes);
     document.addEventListener('mousemove', dragNotes);
@@ -718,17 +789,45 @@ function setupNotesEventListeners(overlay) {
         toggleNotesOverlay(false);
     });
 
-    textarea.addEventListener('input', () => {
-        notes = textarea.value;
+    displayDiv.addEventListener('input', () => {
+        notes = displayDiv.innerHTML;
     });
 
     insertTimeBtn.addEventListener('click', () => {
         const timestamp = new Date().toLocaleTimeString();
-        insertTextAtCursor(textarea, `[${timestamp}] `);
+        insertTextAtCursor(displayDiv, `[${timestamp}] `);
     });
 
     clearDotsBtn.addEventListener('click', () => {
         clearReferenceDots();
+    });
+
+    const colorBtn = overlay.querySelector('#cycleColor');
+    colorBtn.addEventListener('click', () => {
+        cycleColor();
+    });
+
+    // Ensure display div maintains focus when clicked
+    displayDiv.addEventListener('click', (e) => {
+        e.stopPropagation();
+        displayDiv.focus();
+    });
+
+    displayDiv.addEventListener('blur', () => {
+        // Store the current selection when focus is lost
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            displayDiv.lastRange = selection.getRangeAt(0);
+        }
+    });
+
+    displayDiv.addEventListener('focus', () => {
+        // Restore the last selection if it exists
+        if (displayDiv.lastRange) {
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(displayDiv.lastRange);
+        }
     });
 }
 
@@ -796,28 +895,62 @@ function addNotesButton() {
     });
 }
 
-function insertTextAtCursor(textarea, text) {
-    const startPos = textarea.selectionStart;
-    const endPos = textarea.selectionEnd;
-    const beforeText = textarea.value.substring(0, startPos);
-    const afterText = textarea.value.substring(endPos);
-    
-    textarea.value = beforeText + text + afterText;
-    textarea.selectionStart = textarea.selectionEnd = startPos + text.length;
-    textarea.focus();
-    notes = textarea.value;
+function insertTextAtCursor(element, text) {
+    // Focus the element first
+    element.focus();
+
+    // Try to get current selection or create a new one at the end
+    let range;
+    try {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            range = selection.getRangeAt(0);
+        } else {
+            range = document.createRange();
+            range.selectNodeContents(element);
+            range.collapse(false); // Collapse to end
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    } catch(e) {
+        // If selection fails, append to the end
+        element.innerHTML += text;
+        return;
+    }
+
+    try {
+        // Create temporary div to hold HTML content
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = text;
+        
+        // Insert the HTML content
+        range.deleteContents();
+        while (tempDiv.firstChild) {
+            range.insertNode(tempDiv.firstChild);
+        }
+        
+        // Move cursor to end of inserted text
+        range.collapse(false);
+    } catch(e) {
+        // If insertion fails, append to the end
+        element.innerHTML += text;
+    }
+
+    // Update notes content
+    notes = element.innerHTML;
 }
 
 
 
 // Reference dot management
-function addReferenceDot(cell) {
+function addReferenceDot(cell, color = dotColors[currentColorIndex]) {
     let dot = cell.querySelector('.reference-dot');
     if (!dot) {
         dot = document.createElement('div');
         dot.className = 'reference-dot';
         cell.appendChild(dot);
     }
+    dot.style.backgroundColor = color;
     dot.style.display = 'block';
 }
 
@@ -852,14 +985,14 @@ function updateReferenceDots() {
 
         // Add this function to generate column labels
         function getColumnLabel(col) {
-            const baseChar = Math.floor(col / 4)
-            const subIndex = col % 4
-            if (subIndex === 0) {
-                return String.fromCharCode(65 + baseChar) // A, B, C, ...
-            } else {
-                return `${String.fromCharCode(65 + baseChar)}${subIndex}`
-            }
-        }
+    const baseChar = Math.floor(col / 4);
+    const subIndex = col % 4;
+    if (subIndex === 0) {
+        return String.fromCharCode(65 + baseChar); // A, B, C, ...
+    } else {
+        return `${String.fromCharCode(65 + baseChar)}${subIndex}`; // A1, A2, A3, B1, B2, B3...
+    }
+}
 
         function isValidGridPosition(row, col) {
     return row >= 0 && row < gridSize && col >= 0 && col < gridSize;
@@ -880,15 +1013,16 @@ function parseCoordinatesFromNotes(notesText) {
 
 // Convert coordinate format to row-col format
 function coordinateToRowCol(coord) {
-    // Split the coordinate into letter and number parts
     const letterPart = coord.match(/[A-Z]+/)[0];
     const numberPart = parseInt(coord.match(/\d+/)[0]);
 
-    // Convert letter part to column number
     let col = 0;
-    for (let i = 0; i < letterPart.length; i++) {
-        col = col * 26 + (letterPart.charCodeAt(i) - 'A'.charCodeAt(0) + 1);
-    }
+    // Calculate base column (A=0, B=4, C=8, etc.)
+    const baseCol = (letterPart.charCodeAt(0) - 'A'.charCodeAt(0)) * 4;
+    
+    // Add subindex if it exists (A1=1, A2=2, A3=3, B1=5, etc.)
+    const subIndex = coord.match(/\d+$/);
+    col = baseCol + (subIndex ? parseInt(subIndex[0]) : 0);
 
     return {
         row: numberPart,
@@ -904,24 +1038,31 @@ function restoreReferenceDots() {
     const allReferences = new Set();
 
     // Add references from saved referencedCells
-    referencedCells.forEach(cellId => {
-        allReferences.add(cellId);
+    referencedCells.forEach(ref => {
+        allReferences.add({
+            cellId: typeof ref === 'string' ? ref : ref.cellId,
+            color: typeof ref === 'string' ? dotColors[0] : ref.color
+        });
     });
 
-    // Parse coordinates from notes text
-    const coordsFromNotes = parseCoordinatesFromNotes(notes);
-    coordsFromNotes.forEach(coord => {
+    // Parse coordinates and colors from notes text
+    const coordMatches = [...notes.matchAll(/\<span style="color: ([^"]+)"\>\[([A-Z]{1,2}\d+)\]\<\/span\>/g)];
+    coordMatches.forEach(match => {
+        const [_, color, coord] = match;
         const { row, col } = coordinateToRowCol(coord);
-        allReferences.add(`${row}-${col}`);
+        allReferences.add({
+            cellId: `${row}-${col}`,
+            color: color
+        });
     });
 
     // Apply dots to all referenced cells
-    allReferences.forEach(cellId => {
+    allReferences.forEach(({cellId, color}) => {
         const [row, col] = cellId.split('-').map(Number);
         const cell = getCell(row, col);
         if (cell) {
-            addReferenceDot(cell);
-            referencedCells.add(cellId); // Update the referencedCells set
+            addReferenceDot(cell, color);
+            referencedCells.add({cellId, color});
         }
     });
 
@@ -1323,16 +1464,31 @@ function validateTransformState() {
     }
 
     if (isNotepadOpen) {
-        // If notepad is open, insert coordinates
+        event.preventDefault();
+        event.stopPropagation();
+
         const coords = `${getColumnLabel(col)}${row}`;
-        const textarea = document.querySelector('.notes-textarea');
-        insertTextAtCursor(textarea, `[${coords}] `);
+        const currentColor = dotColors[currentColorIndex];
         
-        // Add reference dot
-        addReferenceDot(cell);
-        referencedCells.add(`${row}-${col}`);
+        // Add colored dot to the cell
+        addReferenceDot(cell, currentColor);
         
-        return; // Don't process normal cell click behavior
+        // Create colored coordinate text with a dot
+        const coloredCoord = `<span style="color: ${currentColor}">●[${coords}]</span> `;
+        
+        // Get the notes display element and ensure it exists
+        const notesDisplay = document.querySelector('.notes-display');
+        if (notesDisplay) {
+            // Focus the display div before inserting text
+            notesDisplay.focus();
+            insertTextAtCursor(notesDisplay, coloredCoord);
+        }
+        
+        referencedCells.add({
+            cellId: `${row}-${col}`,
+            color: currentColor
+        });
+        return;
     }
 
     // Check if transform changed and restore if necessary
@@ -1836,60 +1992,19 @@ function updateNeighboringCells(row, col) {
         }
 
         async function createLegend() {
-            const legendContent = document.getElementById('legendContent')
-            legendContent.innerHTML = '' // Clear existing content
+    const legendContentDiv = document.getElementById('legendContent');
+    
+    // Simply use the predefined legendContent
+    legendContentDiv.innerHTML = legendContent;
+    
+    // No need for the old item-by-item creation since 
+    // the new content includes everything in the template string
+}
 
-            for (const item of legendItems) {
-                const icons = getIconClass(item.type)
-                const isRpgIconAvailable = await checkIconAvailability(icons.ra)
-
-                const legendItem = document.createElement('div')
-                legendItem.className = 'legend-item'
-
-                const iconElement = document.createElement('div')
-                iconElement.className = 'legend-icon'
-                if (isRpgIconAvailable) {
-                    iconElement.innerHTML = `<i class="ra ${icons.ra}"></i>`
-                } else {
-                    iconElement.innerHTML = `<i class="material-icons">${icons.material}</i>`
-                }
-
-                const textElement = document.createElement('div')
-                textElement.className = 'legend-text'
-                textElement.textContent = item.label
-
-                legendItem.appendChild(iconElement)
-                legendItem.appendChild(textElement)
-                legendContent.appendChild(legendItem)
-            }
-        }
-
-        function setupLegend() {
-            const legendItems = [
-                { type: 'door', label: 'Door' },
-                { type: 'secretdoor', label: 'Secret Door' },
-                { type: 'enemy', label: 'Enemy' },
-                { type: 'stairs', label: 'Stairs' },
-                { type: 'trap', label: 'Trap' },
-                { type: 'npc', label: 'NPC' },
-                { type: 'treasure', label: 'Treasure' }
-            ]
-
-            // Create a button to toggle the legend
-            const toggleButton = document.createElement('button')
-            toggleButton.id = 'toggleLegend'
-            toggleButton.innerHTML = '?'
-            document.body.appendChild(toggleButton)
-
-            const legend = document.getElementById('legend')
-            toggleButton.addEventListener('click', () => {
-                legend.style.display =
-                    legend.style.display === 'none' ? 'block' : 'none'
-            })
-
-            // Initial creation of the legend
-            createLegend()
-        }
+function setupLegend() {
+    // Just call createLegend to set up initial content
+    createLegend();
+}
 
         function handlePan(dx, dy) {
     // Store current state
@@ -2258,6 +2373,27 @@ function initializePanControls() {
                     const mode = e.currentTarget.id
                     console.log('FAB menu item clicked:', mode)
 
+                    if (mode === 'toggleLegend') {
+            e.stopPropagation(); // Prevent event bubbling
+            const legend = document.getElementById('legend');
+            const legendContentDiv = document.getElementById('legendContent');
+            
+            // Set content only if it's not already set
+            if (!legendContentDiv.innerHTML) {
+                legendContentDiv.innerHTML = legendContent;
+            }
+            
+            // Toggle visibility
+            const isCurrentlyHidden = legend.style.display === 'none' || !legend.style.display;
+            legend.style.display = isCurrentlyHidden ? 'block' : 'none';
+            
+            console.log('Legend visibility:', legend.style.display);
+            
+            // Hide fab menu
+            fabMenu.style.display = 'none';
+            return; // Exit early to prevent other handlers
+        }
+
                     if (mode === 'mapElements') {
                         isElementModeActive = !isElementModeActive
 
@@ -2327,6 +2463,9 @@ function initializePanControls() {
                     }
                 })
             })
+
+            //legend click handler
+            
 
             // Add click handler to diagonal rotate FAB
             diagonalRotateFab.addEventListener('click', cycleDiagonalDirection)
@@ -2398,62 +2537,68 @@ function initializePanControls() {
 
         // Save and Load Functions
         function saveMap() {
-            const filledCells = []
-            const specialCells = []
+    const filledCells = [];
+    const specialCells = [];
 
-            cells.forEach((cell, key) => {
-                const [row, col] = key.split('-').map(Number)
-                if (cell.classList.contains('filled')) {
-                    filledCells.push({ row, col })
+    cells.forEach((cell, key) => {
+        const [row, col] = key.split('-').map(Number);
+        if (cell.classList.contains('filled')) {
+            filledCells.push({ row, col });
 
-                    // Check for diagonal paths
-                    const diagonalDirections = ['ne', 'se', 'sw', 'nw']
-                    const diagonalDirection = diagonalDirections.find(dir =>
-                        cell.classList.contains(`diagonal-${dir}`)
-                    )
+            // Check for diagonal paths
+            const diagonalDirections = ['ne', 'se', 'sw', 'nw'];
+            const diagonalDirection = diagonalDirections.find(dir =>
+                cell.classList.contains(`diagonal-${dir}`)
+            );
 
-                    if (diagonalDirection) {
-                        specialCells.push({
-                            row,
-                            col,
-                            type: 'diagonal',
-                            direction: diagonalDirection
-                        })
-                    } else {
-                        const iconElement = cell.querySelector('i')
-                        if (iconElement) {
-                            const type = getElementTypeFromIcon(iconElement)
-                            specialCells.push({
-                                row,
-                                col,
-                                type,
-                                isSecret: cell.classList.contains('secret-element'),
-                                isRevealed: cell.classList.contains('revealed')
-                            })
-                        }
-                    }
+            if (diagonalDirection) {
+                specialCells.push({
+                    row,
+                    col,
+                    type: 'diagonal',
+                    direction: diagonalDirection
+                });
+            } else {
+                const iconElement = cell.querySelector('i');
+                if (iconElement) {
+                    const type = getElementTypeFromIcon(iconElement);
+                    specialCells.push({
+                        row,
+                        col,
+                        type,
+                        isSecret: cell.classList.contains('secret-element'),
+                        isRevealed: cell.classList.contains('revealed')
+                    });
                 }
-            })
+            }
+        }
+    });
 
-            const saveData = {
+    // Get notes content from displayDiv
+    const notesContent = document.querySelector('.notes-display')?.innerHTML || notes;
+
+    const saveData = {
         filledCells,
         specialCells,
-        notes,
-        referencedCells: Array.from(referencedCells) // Save referenced cells
+        notes: notesContent,
+        referencedCells: Array.from(referencedCells).map(ref => ({
+            cellId: typeof ref === 'string' ? ref : ref.cellId,
+            color: typeof ref === 'string' ? dotColors[0] : ref.color
+        }))
     };
 
-            const mapJson = JSON.stringify(saveData)
-            const blob = new Blob([mapJson], { type: 'application/json' })
-            const url = URL.createObjectURL(blob)
-            const a = document.createElement('a')
-            a.href = url
-            const filename = 'TapMap_' + new Date().toJSON().slice(0, 10) + '.json'
-            a.download = filename
-            document.body.appendChild(a)
-            a.click()
-            document.body.removeChild(a)
-            URL.revokeObjectURL(url)
-        }
+    const mapJson = JSON.stringify(saveData);
+    const blob = new Blob([mapJson], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const filename = 'TapMap_' + new Date().toJSON().slice(0, 10) + '.json';
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
 
         function getElementTypeFromIcon(iconElement) {
             if (iconElement.classList.contains('ra')) {
@@ -2481,12 +2626,23 @@ function initializePanControls() {
             
             // Load notes and referenced cells
             notes = loadedData.notes || '';
-            referencedCells = new Set(loadedData.referencedCells || []);
+            
+            // Handle both old and new format of referencedCells
+            if (Array.isArray(loadedData.referencedCells)) {
+                // Old format - convert to new format
+                referencedCells = new Set(loadedData.referencedCells.map(cellId => ({
+                    cellId,
+                    color: dotColors[0] // Default to first color for old format
+                })));
+            } else {
+                // New format with colors
+                referencedCells = new Set(loadedData.referencedCells || []);
+            }
 
-            // Update notes textarea
-            const textarea = document.querySelector('.notes-textarea');
-            if (textarea) {
-                textarea.value = notes;
+            // Update notes display
+            const displayDiv = document.querySelector('.notes-display');
+            if (displayDiv) {
+                displayDiv.innerHTML = notes;
             }
 
             // Render the map first
